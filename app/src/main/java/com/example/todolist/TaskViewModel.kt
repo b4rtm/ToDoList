@@ -26,4 +26,10 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
             taskDao.insert(task) // Use Coroutine for asynchronous task
         }
     }
+
+    fun deleteTask(task: Task) {
+        viewModelScope.launch {
+            taskDao.delete(task)
+        }
+    }
 }

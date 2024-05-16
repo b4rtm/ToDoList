@@ -28,10 +28,15 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
         viewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
 
 
+
+
         adapter = TaskAdapter(ArrayList())
+        adapter.setOnDeleteClickListener { task ->
+            viewModel.deleteTask(task)
+        }
+
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
-
 
         fab.setOnClickListener {
             val dialog = AddTaskDialog(this)
@@ -53,6 +58,10 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
         val newTask = Task(title = title, description = description)
         viewModel.addTask(newTask) // Delegate to ViewModel for asynchronous insert
         adapter.addTask(newTask) // Update UI immediately (optional)
+    }
+
+    fun onDeleteButtonClick(task: Task) {
+        viewModel.deleteTask(task) // Call ViewModel to delete the task
     }
 
 
