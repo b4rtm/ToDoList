@@ -1,23 +1,29 @@
 package com.example.todolist;
 
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
+import androidx.room.Room
+import kotlinx.coroutines.launch
 
-class TaskViewModel : ViewModel() {
-    val taskList: MutableLiveData<MutableList<Task>> by lazy {
-        MutableLiveData<MutableList<Task>>()
-    }
+class TaskViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val taskDao: TaskDao
+    val allTasks: LiveData<List<Task>>
 
     init {
-        taskList.value = mutableListOf()
+        val database = Room.databaseBuilder(application, TaskDatabase::class.java, "task_database")
+            .build()
+        taskDao = database.taskDao()
+        allTasks = taskDao.getAllTasks()
     }
 
-    fun addTask(task: Task) {
-        val currentList = taskList.value
-        Log.d("TaskViewModel", "Task added: ${task.title}")
-        currentList?.add(task)
-        taskList.value = currentList
 
+
+    fun addTask(task: Task) {
+        viewModelScope.launch {
+            taskDao.insert(task) // Use Coroutine for asynchronous task
+        }
     }
 }

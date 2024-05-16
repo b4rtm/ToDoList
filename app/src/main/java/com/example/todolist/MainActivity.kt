@@ -43,14 +43,17 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
             applicationContext,
             TaskDatabase::class.java, "task_database"
         ).build()
+
+        viewModel.allTasks.observe(this) { tasks ->
+            adapter.updateTasks(tasks)
+        }
     }
 
     override fun onTaskAdded(title: String, description: String) {
-        val newTask = Task(title  = title, description  = description)
-        viewModel.addTask(newTask)
-        adapter.addTask(newTask)
-        GlobalScope.launch(Dispatchers.IO) {
-            taskDatabase.taskDao().insert(newTask)
-        }
+        val newTask = Task(title = title, description = description)
+        viewModel.addTask(newTask) // Delegate to ViewModel for asynchronous insert
+        adapter.addTask(newTask) // Update UI immediately (optional)
     }
+
+
 }

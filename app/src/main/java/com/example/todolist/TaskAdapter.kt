@@ -29,6 +29,12 @@ class TaskAdapter(private val taskList: MutableList<Task>) : RecyclerView.Adapte
                 return taskList.size
         }
 
+        fun updateTasks(newList: List<Task>) {
+                taskList.clear() // Clear existing data
+                taskList.addAll(newList)
+                notifyDataSetChanged() // Notify adapter about data change
+        }
+
         fun addTask(task: Task) {
                 taskList.add(task)
                 notifyDataSetChanged()
