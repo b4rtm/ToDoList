@@ -50,8 +50,13 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
         }
     }
 
-    override fun onTaskAdded(title: String, description: String, selectedDate:Long) {
-        val newTask = Task(title = title, description = description, dueDate = selectedDate)
+    override fun onTaskAdded(
+        title: String,
+        description: String,
+        selectedDate: Long,
+        selectedCategory: String
+    ) {
+        val newTask = Task(title = title, description = description, dueDate = selectedDate, category = selectedCategory)
         viewModel.addTask(newTask)
         adapter.addTask(newTask)
     }

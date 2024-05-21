@@ -23,6 +23,13 @@
         android:gravity="top"
         android:minLines="1"/>
 
+    <Spinner
+        android:id="@+id/categorySpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:entries="@array/categories"/>
+
     <Button
         android:id="@+id/dateButton"
         android:layout_width="wrap_content"
