@@ -7,9 +7,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
 
@@ -26,7 +23,6 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
         fab = findViewById(R.id.fab)
         recyclerView = findViewById(R.id.recyclerView)
         viewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
-
 
 
 
@@ -54,14 +50,14 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
         }
     }
 
-    override fun onTaskAdded(title: String, description: String) {
-        val newTask = Task(title = title, description = description)
-        viewModel.addTask(newTask) // Delegate to ViewModel for asynchronous insert
-        adapter.addTask(newTask) // Update UI immediately (optional)
+    override fun onTaskAdded(title: String, description: String, selectedDate:Long) {
+        val newTask = Task(title = title, description = description, dueDate = selectedDate)
+        viewModel.addTask(newTask)
+        adapter.addTask(newTask)
     }
 
     fun onDeleteButtonClick(task: Task) {
-        viewModel.deleteTask(task) // Call ViewModel to delete the task
+        viewModel.deleteTask(task)
     }
 
 
