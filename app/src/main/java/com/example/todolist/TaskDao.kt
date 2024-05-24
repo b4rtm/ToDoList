@@ -24,6 +24,9 @@ interface TaskDao {
 //    @Query("SELECT * FROM tasks WHERE id = :id")
 //    suspend fun getTodoById(id: Long): LiveData<Task>?
 
+    @Query("SELECT * FROM attachments WHERE taskId = :taskID")
+    fun getAttachmentsByTaskId(taskID: Long): List<Attachment>
+
     @Delete
     suspend fun delete(task: Task)
 }
