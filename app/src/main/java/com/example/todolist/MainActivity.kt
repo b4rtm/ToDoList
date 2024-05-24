@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
                 .replace(R.id.main, taskDetailFragment)
                 .addToBackStack(null)
                 .commit()
+            fab.hide()
         }
 
         fab.setOnClickListener {
@@ -98,5 +99,9 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
         viewModel.deleteTask(task)
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        fab.show()
+    }
 
 }
