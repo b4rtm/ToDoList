@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import androidx.room.Room
+import com.example.todolist.entities.Attachment
 import com.example.todolist.entities.Task
 import kotlinx.coroutines.launch
 
@@ -22,9 +23,11 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
 
 
 
-    fun addTask(task: Task) {
+    fun addTask(task: Task, attachments: List<Attachment>) {
         viewModelScope.launch {
-            taskDao.insert(task) // Use Coroutine for asynchronous task
+            val taskId = taskDao.insert(task) // Use Coroutine for asynchronous task
+            attachments.forEach { it.taskId = taskId }
+            taskDao.insertAttachments(attachments)
         }
     }
 

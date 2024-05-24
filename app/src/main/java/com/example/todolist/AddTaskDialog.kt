@@ -1,34 +1,40 @@
-package com.example.todolist;
+// AddTaskDialog.kt
+package com.example.todolist
 
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
 import android.content.Context
-import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
+import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.app.ActivityCompat.startActivityForResult
+import com.example.todolist.entities.Attachment
 import java.util.Date
 import java.util.Locale
 
-class AddTaskDialog(context: Context) : Dialog(context) {
+class AddTaskDialog(
+    context: Context,
+    private val launchFilePicker: () -> Unit
+) : Dialog(context) {
     private lateinit var titleEditText: EditText
     private lateinit var descriptionEditText: EditText
-    private lateinit var addButton : Button
-    private lateinit var cancelButton : Button
-    private lateinit var dateButton : Button
+    private lateinit var addButton: Button
+    private lateinit var cancelButton: Button
+    private lateinit var dateButton: Button
     private var selectedDate: Long = 0
     private lateinit var selectedDateTextView: TextView
     private lateinit var categorySpinner: Spinner
-//    private lateinit var selectImageButton : Button
+    private lateinit var selectImageButton: Button
+
+    private val attachmentUris = mutableListOf<Uri>()
 
     var listener: OnTaskAddedListener? = null
 
@@ -37,7 +43,8 @@ class AddTaskDialog(context: Context) : Dialog(context) {
             title: String,
             description: String,
             selectedDate: Long,
-            selectedCategory: String
+            selectedCategory: String,
+            attachments: MutableList<Uri>
         )
     }
 
@@ -52,7 +59,7 @@ class AddTaskDialog(context: Context) : Dialog(context) {
         dateButton = findViewById(R.id.dateButton)
         selectedDateTextView = findViewById(R.id.selectedDateTextView)
         categorySpinner = findViewById(R.id.categorySpinner)
-//        selectImageButton = findViewById(R.id.selectImageButton)
+        selectImageButton = findViewById(R.id.selectImageButton)
 
         val categories = context.resources.getStringArray(R.array.categories)
         val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, categories)
@@ -64,20 +71,17 @@ class AddTaskDialog(context: Context) : Dialog(context) {
             val selectedCategory = categorySpinner.selectedItem as String
 
             if (selectedDate == 0L) {
-                // Show error message or toast (e.g., using Toast.makeText)
                 Toast.makeText(context, "Please select a date and time for the task", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            listener?.onTaskAdded(title, description, selectedDate, selectedCategory)
+            listener?.onTaskAdded(title, description, selectedDate, selectedCategory, attachmentUris)
             dismiss()
         }
 
-//        selectImageButton.setOnClickListener {
-//            // Launch the gallery intent
-//            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-//            startActivityForResult(context, intent)
-//        }
+        selectImageButton.setOnClickListener {
+            launchFilePicker()
+        }
 
         cancelButton.setOnClickListener {
             dismiss()
@@ -88,6 +92,9 @@ class AddTaskDialog(context: Context) : Dialog(context) {
         }
     }
 
+    fun setAttachmentUris(uris: List<Uri>) {
+        attachmentUris.addAll(uris)
+    }
 
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
@@ -97,7 +104,6 @@ class AddTaskDialog(context: Context) : Dialog(context) {
 
         val datePickerDialog = DatePickerDialog(context,
             { _, selectedYear, selectedMonth, selectedDay ->
-
                 val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
                 val currentMinute = calendar.get(Calendar.MINUTE)
 
@@ -123,5 +129,4 @@ class AddTaskDialog(context: Context) : Dialog(context) {
         val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
         return sdf.format(Date(millis))
     }
-
 }

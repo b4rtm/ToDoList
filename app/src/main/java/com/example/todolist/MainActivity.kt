@@ -1,11 +1,16 @@
 package com.example.todolist
 
+import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
+import com.example.todolist.entities.Attachment
 import com.example.todolist.entities.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -17,9 +22,17 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
     private lateinit var adapter: TaskAdapter
     private lateinit var taskDatabase: TaskDatabase
 
+    private lateinit var getContent: ActivityResultLauncher<String>
+    private lateinit var addTaskDialog: AddTaskDialog
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        getContent = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris: List<Uri> ->
+            addTaskDialog.setAttachmentUris(uris)
+        }
 
         fab = findViewById(R.id.fab)
         recyclerView = findViewById(R.id.recyclerView)
@@ -34,15 +47,18 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         fab.setOnClickListener {
-            val dialog = AddTaskDialog(this)
-            dialog.listener = this
-            dialog.show()
-        }
+            addTaskDialog = AddTaskDialog(this) {
+                getContent.launch("*/*")
+            }
 
+            addTaskDialog.listener = this
+            addTaskDialog.show()
+        }
         taskDatabase = Room.databaseBuilder(
             applicationContext,
             TaskDatabase::class.java, "task_database"
         ).build()
+
 
         viewModel.allTasks.observe(this) { tasks ->
             adapter.updateTasks(tasks)
@@ -53,10 +69,14 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
         title: String,
         description: String,
         selectedDate: Long,
-        selectedCategory: String
+        selectedCategory: String,
+        attachments: MutableList<Uri>
     ) {
         val newTask = Task(title = title, description = description, dueDate = selectedDate, category = selectedCategory)
-        viewModel.addTask(newTask)
+        val attachmentEntities = attachments.map { uri ->
+            Attachment(taskId = newTask.id, path = uri.toString())
+        }
+        viewModel.addTask(newTask, attachmentEntities)
         adapter.addTask(newTask)
     }
 
