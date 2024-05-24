@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -13,9 +14,14 @@ import com.example.todolist.entities.Task
 class TaskAdapter(private val taskList: MutableList<Task>) : RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
 
         private var onDeleteClickListener: ((Task) -> Unit)? = null
+        private var onItemClickListener: ((Task) -> Unit)? = null
 
         fun setOnDeleteClickListener(listener: (Task) -> Unit) {
                 onDeleteClickListener = listener
+        }
+
+        fun setOnItemClickListener(listener: (Task) -> Unit) {
+                onItemClickListener = listener
         }
 
         inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -23,6 +29,15 @@ class TaskAdapter(private val taskList: MutableList<Task>) : RecyclerView.Adapte
                 val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
                 val descriptionTextView: TextView = itemView.findViewById(R.id.descriptionTextView)
                 val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
+
+                init {
+                        itemView.setOnClickListener {
+                                val position = adapterPosition
+                                if (position != RecyclerView.NO_POSITION) {
+                                        onItemClickListener?.invoke(taskList[position])
+                                }
+                        }
+                }
 
         }
 
@@ -37,6 +52,8 @@ class TaskAdapter(private val taskList: MutableList<Task>) : RecyclerView.Adapte
                 holder.descriptionTextView.text = task.description
                 holder.deleteButton.setOnClickListener {
                         showConfirmationDialog(holder.itemView.context, task, position)                }
+
+
         }
 
         override fun getItemCount(): Int {
@@ -53,6 +70,8 @@ class TaskAdapter(private val taskList: MutableList<Task>) : RecyclerView.Adapte
                 taskList.add(task)
                 notifyDataSetChanged()
         }
+
+
 
         private fun showConfirmationDialog(context: Context, task: Task, position: Int) {
                 val dialog = AlertDialog.Builder(context)

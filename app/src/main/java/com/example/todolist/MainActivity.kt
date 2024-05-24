@@ -43,8 +43,22 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
             viewModel.deleteTask(task)
         }
 
+
+
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        adapter.setOnItemClickListener { task ->
+            val bundle = Bundle()
+            bundle.putLong("TASK_ID", task.id)
+            val taskDetailFragment = TaskDetailFragment()
+            taskDetailFragment.arguments = bundle
+
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.main, taskDetailFragment)
+                .addToBackStack(null)
+                .commit()
+        }
 
         fab.setOnClickListener {
             addTaskDialog = AddTaskDialog(this) {
@@ -79,6 +93,7 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
         viewModel.addTask(newTask, attachmentEntities)
         adapter.addTask(newTask)
     }
+
 
     fun onDeleteButtonClick(task: Task) {
         viewModel.deleteTask(task)
