@@ -36,4 +36,8 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
             taskDao.delete(task)
         }
     }
+
+//    fun getTask(id: Long): LiveData<Task>? {
+//        return taskDao.getTodoById(id)
+//    }
 }

@@ -2,7 +2,6 @@ package com.example.todolist
 
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -51,7 +50,7 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
         adapter.setOnItemClickListener { task ->
             val bundle = Bundle()
             bundle.putLong("TASK_ID", task.id)
-            val taskDetailFragment = TaskDetailFragment()
+            val taskDetailFragment = TaskDetailFragment(task)
             taskDetailFragment.arguments = bundle
 
             supportFragmentManager.beginTransaction()

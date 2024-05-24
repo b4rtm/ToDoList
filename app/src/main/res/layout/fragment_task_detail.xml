@@ -17,5 +17,35 @@
         android:layout_height="wrap_content"
         android:text="Task Description" />
 
+    <TextView
+        android:id="@+id/taskCreatedAt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Task Created At" />
+
+    <TextView
+        android:id="@+id/taskDueDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Task Due Date" />
+
+    <TextView
+        android:id="@+id/taskStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Task Status" />
+
+    <TextView
+        android:id="@+id/taskNotificationEnabled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Task Notification Enabled" />
+
+    <TextView
+        android:id="@+id/taskCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Task Category" />
+
     <!-- More views as needed -->
 </LinearLayout>
