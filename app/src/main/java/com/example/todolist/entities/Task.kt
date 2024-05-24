@@ -1,4 +1,4 @@
-package com.example.todolist
+package com.example.todolist.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -13,7 +13,7 @@ data class Task(
     val status: TaskStatus = TaskStatus.IN_PROGRESS,
     val notificationEnabled: Boolean = true,
     val category: String? = null,
-    //val attachments: List<Attachment>? = null,
+//    val attachments: List<String>? = null,
 )
 
 enum class TaskStatus {
@@ -21,12 +21,3 @@ enum class TaskStatus {
     COMPLETED
 }
 
-data class Attachment(
-    val type: AttachmentType,
-    val path: String
-)
-
-enum class AttachmentType {
-    IMAGE,
-    FILE
-}

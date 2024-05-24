@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
+import com.example.todolist.entities.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
@@ -23,8 +24,6 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
         fab = findViewById(R.id.fab)
         recyclerView = findViewById(R.id.recyclerView)
         viewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
-
-
 
         adapter = TaskAdapter(ArrayList())
         adapter.setOnDeleteClickListener { task ->

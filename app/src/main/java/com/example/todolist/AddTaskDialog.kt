@@ -4,15 +4,18 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat.startActivityForResult
 import java.util.Date
 import java.util.Locale
 
@@ -25,8 +28,7 @@ class AddTaskDialog(context: Context) : Dialog(context) {
     private var selectedDate: Long = 0
     private lateinit var selectedDateTextView: TextView
     private lateinit var categorySpinner: Spinner
-
-
+//    private lateinit var selectImageButton : Button
 
     var listener: OnTaskAddedListener? = null
 
@@ -50,6 +52,7 @@ class AddTaskDialog(context: Context) : Dialog(context) {
         dateButton = findViewById(R.id.dateButton)
         selectedDateTextView = findViewById(R.id.selectedDateTextView)
         categorySpinner = findViewById(R.id.categorySpinner)
+//        selectImageButton = findViewById(R.id.selectImageButton)
 
         val categories = context.resources.getStringArray(R.array.categories)
         val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, categories)
@@ -69,6 +72,12 @@ class AddTaskDialog(context: Context) : Dialog(context) {
             listener?.onTaskAdded(title, description, selectedDate, selectedCategory)
             dismiss()
         }
+
+//        selectImageButton.setOnClickListener {
+//            // Launch the gallery intent
+//            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+//            startActivityForResult(context, intent)
+//        }
 
         cancelButton.setOnClickListener {
             dismiss()
