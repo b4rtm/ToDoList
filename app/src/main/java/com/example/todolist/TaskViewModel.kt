@@ -37,6 +37,10 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun getAttachmentsForTask(taskId: Long): LiveData<List<Attachment>> {
+        return taskDao.getAttachmentsByTaskId(taskId)
+    }
+
 //    fun getTask(id: Long): LiveData<Task>? {
 //        return taskDao.getTodoById(id)
 //    }

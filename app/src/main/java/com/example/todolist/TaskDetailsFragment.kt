@@ -7,7 +7,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.todolist.entities.Task
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 class TaskDetailFragment(private val task: Task) : Fragment() {
 
@@ -19,6 +24,7 @@ class TaskDetailFragment(private val task: Task) : Fragment() {
     private lateinit var taskStatus: TextView
     private lateinit var taskNotificationEnabled : TextView
     private lateinit var taskCategory : TextView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,6 +37,10 @@ class TaskDetailFragment(private val task: Task) : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
+
+
         taskTitle = view.findViewById(R.id.taskTitle)
         description = view.findViewById(R.id.taskDescription)
         taskCreatedAt = view.findViewById(R.id.taskCreatedAt)
@@ -39,35 +49,27 @@ class TaskDetailFragment(private val task: Task) : Fragment() {
         taskNotificationEnabled = view.findViewById(R.id.taskNotificationEnabled)
         taskCategory = view.findViewById(R.id.taskCategory)
 
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
+        val formatterWithoutSecs = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+
         taskTitle.text = task.title
         description.text = task.description
-        taskCreatedAt.text = task.createdAt.toString()
-        taskDueDate.text = task.dueDate.toString()
+        taskCreatedAt.text = formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(task.createdAt), ZoneId.systemDefault()))
+        taskDueDate.text = formatterWithoutSecs.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(task.dueDate), ZoneId.systemDefault()))
         taskStatus.text = task.status.toString()
         taskNotificationEnabled.text = task.notificationEnabled.toString()
         taskCategory.text = task.category
 
-        // Odbierz przekazane szczegóły zadania
-//        val taskId = arguments?.getLong("TASK_ID") ?: -1L
-//        if (taskId != -1L) {
-//            viewModel.getTask(taskId).observe(viewLifecycleOwner) { task ->
-//                if (task != null) {
-//                    displayTaskDetails(task)
-//                } else {
-//                    // Handle the case where the task is not found (e.g., show a message)
-//                    Toast.makeText(requireContext(), "Task not found", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//        }
+        viewModel.getAttachmentsForTask(task.id).observe(viewLifecycleOwner) { attachments ->
+            val attachmentTextView: TextView = view.findViewById(R.id.attachmentTextView)
 
+            // Format attachment URIs for display
+            val formattedAttachments = attachments.joinToString("\n") { attachment ->
+                attachment.path // Assuming path is the field containing attachment URI
+            }
 
+            attachmentTextView.text = formattedAttachments
+        }
     }
 
-//    private fun getTaskFromDatabase(taskId: Long): Task {
-//        // Pobierz zadanie z bazy danych
-//    }
-//
-//    private fun displayTaskDetails(task: Task) {
-//        // Wyświetl szczegóły zadania w interfejsie użytkownika
-//    }
 }
