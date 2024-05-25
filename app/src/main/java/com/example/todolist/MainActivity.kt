@@ -12,6 +12,7 @@ import androidx.room.Room
 import com.example.todolist.database.TaskDatabase
 import com.example.todolist.entities.Attachment
 import com.example.todolist.entities.Task
+import com.example.todolist.utils.ImageUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {

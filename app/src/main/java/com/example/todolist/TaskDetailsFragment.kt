@@ -18,14 +18,12 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import android.Manifest
-import android.media.MediaSession2Service.MediaNotification
-import android.os.Build
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
-import android.widget.ToggleButton
 import androidx.appcompat.widget.SwitchCompat
 import com.example.todolist.entities.TaskStatus
+import com.example.todolist.utils.DateTimeUtils
 
 
 class TaskDetailsFragment(private val task: Task) : Fragment() {

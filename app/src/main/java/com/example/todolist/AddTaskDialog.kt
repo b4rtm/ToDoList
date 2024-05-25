@@ -1,24 +1,17 @@
 // AddTaskDialog.kt
 package com.example.todolist
 
-import android.app.DatePickerDialog
 import android.app.Dialog
-import android.app.TimePickerDialog
 import android.content.Context
-import android.icu.text.SimpleDateFormat
-import android.icu.util.Calendar
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import com.example.todolist.entities.Attachment
-import java.util.Date
-import java.util.Locale
+import com.example.todolist.utils.DateTimeUtils
 
 class AddTaskDialog(
     context: Context,
