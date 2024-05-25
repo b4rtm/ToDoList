@@ -88,7 +88,11 @@ class AddTaskDialog(
         }
 
         dateButton.setOnClickListener {
-            showDatePickerDialog()
+            DateTimeUtils.showDatePickerDialog(context){
+                milis -> selectedDateTextView.text = DateTimeUtils.formatDateTime(milis)
+                selectedDate = milis
+            }
+
         }
     }
 
@@ -96,36 +100,5 @@ class AddTaskDialog(
         attachmentUris.addAll(uris)
     }
 
-    private fun showDatePickerDialog() {
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        val datePickerDialog = DatePickerDialog(context,
-            { _, selectedYear, selectedMonth, selectedDay ->
-                val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
-                val currentMinute = calendar.get(Calendar.MINUTE)
-
-                val timePickerDialog = TimePickerDialog(context,
-                    { _, hourOfDay, minute ->
-                        val selectedMillis = Calendar.getInstance().apply {
-                            set(Calendar.YEAR, selectedYear)
-                            set(Calendar.MONTH, selectedMonth)
-                            set(Calendar.DAY_OF_MONTH, selectedDay)
-                            set(Calendar.HOUR_OF_DAY, hourOfDay)
-                            set(Calendar.MINUTE, minute)
-                        }.timeInMillis
-                        selectedDate = selectedMillis
-                        selectedDateTextView.text = formatDateTime(selectedMillis)
-                    }, currentHour, currentMinute, true)
-                timePickerDialog.show()
-            }, year, month, day)
-        datePickerDialog.show()
-    }
-
-    private fun formatDateTime(millis: Long): String {
-        val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-        return sdf.format(Date(millis))
-    }
 }
