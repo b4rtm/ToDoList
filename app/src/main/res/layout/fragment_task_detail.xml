@@ -47,11 +47,11 @@
         android:layout_height="wrap_content"
         android:text="Task Category" />
 
-    <TextView
-        android:id="@+id/attachmentTextView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/attachmentContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Task Category" />
+        android:orientation="vertical"/>
 
     <!-- More views as needed -->
 </LinearLayout>

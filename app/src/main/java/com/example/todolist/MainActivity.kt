@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
     private lateinit var addTaskDialog: AddTaskDialog
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
