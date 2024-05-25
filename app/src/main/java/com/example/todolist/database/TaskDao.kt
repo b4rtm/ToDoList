@@ -6,6 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.example.todolist.entities.Attachment
 import com.example.todolist.entities.Task
 
@@ -27,6 +28,8 @@ interface TaskDao {
     @Query("SELECT * FROM attachments WHERE taskId = :taskID")
     fun getAttachmentsByTaskId(taskID: Long): LiveData<List<Attachment>>
 
+    @Update
+    suspend fun update(task: Task)
 
     @Delete
     suspend fun delete(task: Task)

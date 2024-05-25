@@ -39,6 +39,12 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun updateTask(task: Task) {
+        viewModelScope.launch {
+            taskDao.update(task)
+        }
+    }
+
     fun getAttachmentsForTask(taskId: Long): LiveData<List<Attachment>> {
         return taskDao.getAttachmentsByTaskId(taskId)
     }

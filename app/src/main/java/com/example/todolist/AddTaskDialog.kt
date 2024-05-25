@@ -118,7 +118,6 @@ class AddTaskDialog(
                         }.timeInMillis
                         selectedDate = selectedMillis
                         selectedDateTextView.text = formatDateTime(selectedMillis)
-                        dateButton.text = "Change Date & Time"
                     }, currentHour, currentMinute, true)
                 timePickerDialog.show()
             }, year, month, day)

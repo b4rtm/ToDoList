@@ -18,7 +18,14 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import android.Manifest
+import android.media.MediaSession2Service.MediaNotification
 import android.os.Build
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.Spinner
+import android.widget.ToggleButton
+import androidx.appcompat.widget.SwitchCompat
+import com.example.todolist.entities.TaskStatus
 
 
 class TaskDetailsFragment(private val task: Task) : Fragment() {
@@ -32,6 +39,11 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
     private lateinit var taskNotificationEnabled : TextView
     private lateinit var taskCategory : TextView
     private lateinit var attachmentContainer: LinearLayout
+    private lateinit var confirmUpdateButton: ImageButton
+    private lateinit var updateCategorySpinner: Spinner
+
+    private lateinit var switchDone: SwitchCompat
+    private lateinit var switchNotification: SwitchCompat
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,6 +83,11 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         taskNotificationEnabled = view.findViewById(R.id.taskNotificationEnabled)
         taskCategory = view.findViewById(R.id.taskCategory)
         attachmentContainer = view.findViewById(R.id.attachmentContainer)
+        confirmUpdateButton = view.findViewById(R.id.confirmUpdate)
+        switchDone = view.findViewById(R.id.switchDone)
+        updateCategorySpinner = view.findViewById(R.id.updateCategorySpinner)
+        switchNotification = view.findViewById(R.id.switchNoti)
+
 
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
         val formatterWithoutSecs = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
@@ -83,6 +100,58 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         taskNotificationEnabled.text = task.notificationEnabled.toString()
         taskCategory.text = task.category
 
+        if(task.notificationEnabled)
+            switchNotification.isChecked = true
+
+        if(task.status == TaskStatus.COMPLETED)
+            switchDone.isChecked = true
+
+        val categories = resources.getStringArray(R.array.categories)
+        updateCategorySpinner.setSelection(categories.indexOf(task.category))
+
+        confirmUpdateButton.setOnClickListener {
+            updateTask(view)
+            requireActivity().supportFragmentManager.popBackStack()
+
+        }
+
+    }
+
+
+    private fun updateTask(view: View) {
+        // Pobranie danych z pól EditText
+        val updatedTitle = view.findViewById<EditText>(R.id.taskTitle).text.toString()
+        val updatedDescription = view.findViewById<EditText>(R.id.taskDescription).text.toString()
+
+        val updatedDueDate = view.findViewById<TextView>(R.id.taskDueDate).text.toString()
+        val updatedDueDateInMilis = convertDateToMilis(updatedDueDate)
+
+        val updatedStatus : TaskStatus = if(switchDone.isChecked)
+            TaskStatus.COMPLETED
+        else
+            TaskStatus.IN_PROGRESS
+
+        val updatedNotificationEnabled = switchDone.isChecked
+        val updatedCategory = updateCategorySpinner.selectedItem.toString()
+
+        val updatedTask = Task(
+            id = task.id,
+            title = updatedTitle,
+            description = updatedDescription,
+            status = updatedStatus,
+            dueDate = updatedDueDateInMilis,
+            category = updatedCategory,
+            notificationEnabled = updatedNotificationEnabled,
+        )
+
+        viewModel.updateTask(updatedTask)
+    }
+
+    private fun convertDateToMilis(date: String): Long {
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+        val dateTime = LocalDateTime.parse(date, formatter)
+        val instant = dateTime.atZone(ZoneId.systemDefault()).toInstant()
+        return instant.toEpochMilli()
     }
 
     private fun loadImage(imageUri: String) {
