@@ -59,7 +59,6 @@
             android:src="@drawable/confirm"/>
     </LinearLayout>
 
-    <!-- Task detail views here -->
     <EditText
         android:id="@+id/taskTitle"
         android:textSize="30sp"
@@ -74,36 +73,10 @@
         android:layout_height="wrap_content"
         android:text="Task Description" />
 
-    <TextView
-        android:id="@+id/taskCreatedAt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Task Created At" />
-
-
-    <TextView
-        android:id="@+id/taskStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Task Status" />
-
-    <TextView
-        android:id="@+id/taskNotificationEnabled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Task Notification Enabled" />
-
-    <TextView
-        android:id="@+id/taskCategory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Task Category" />
-
     <LinearLayout
         android:id="@+id/attachmentContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"/>
 
-    <!-- More views as needed -->
 </LinearLayout>

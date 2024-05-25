@@ -33,9 +33,6 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
     private lateinit var description : TextView
     private lateinit var taskCreatedAt : TextView
     private lateinit var taskDueDate : TextView
-    private lateinit var taskStatus: TextView
-    private lateinit var taskNotificationEnabled : TextView
-    private lateinit var taskCategory : TextView
     private lateinit var attachmentContainer: LinearLayout
     private lateinit var confirmUpdateButton: ImageButton
     private lateinit var calendarButton: ImageButton
@@ -78,11 +75,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
 
         taskTitle = view.findViewById(R.id.taskTitle)
         description = view.findViewById(R.id.taskDescription)
-        taskCreatedAt = view.findViewById(R.id.taskCreatedAt)
         taskDueDate = view.findViewById(R.id.taskDueDate)
-        taskStatus = view.findViewById(R.id.taskStatus)
-        taskNotificationEnabled = view.findViewById(R.id.taskNotificationEnabled)
-        taskCategory = view.findViewById(R.id.taskCategory)
         attachmentContainer = view.findViewById(R.id.attachmentContainer)
         confirmUpdateButton = view.findViewById(R.id.confirmUpdate)
         switchDone = view.findViewById(R.id.switchDone)
@@ -97,9 +90,6 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         description.text = task.description
         taskCreatedAt.text = formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(task.createdAt), ZoneId.systemDefault()))
         taskDueDate.text = formatterWithoutSecs.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(task.dueDate), ZoneId.systemDefault()))
-        taskStatus.text = task.status.toString()
-        taskNotificationEnabled.text = task.notificationEnabled.toString()
-        taskCategory.text = task.category
 
         if(task.notificationEnabled)
             switchNotification.isChecked = true
@@ -122,15 +112,12 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
                 }
             }
         }
-
     }
 
 
     private fun updateTask(view: View) {
-        // Pobranie danych z pól EditText
         val updatedTitle = view.findViewById<EditText>(R.id.taskTitle).text.toString()
         val updatedDescription = view.findViewById<EditText>(R.id.taskDescription).text.toString()
-
         val updatedDueDateInMilis = selectedDate
 
         val updatedStatus : TaskStatus = if(switchDone.isChecked)
@@ -162,7 +149,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
-        layoutParams.setMargins(0, 0, 16, 0) // Adjust margins as needed
+        layoutParams.setMargins(0, 0, 16, 0)
         imageView.layoutParams = layoutParams
 
         Glide.with(this)
@@ -174,9 +161,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
     }
 
     private fun loadImages() {
-        // Assuming you have a ViewModel method to fetch attachments for a task
         viewModel.getAttachmentsForTask(task.id).observe(viewLifecycleOwner) { attachments ->
-            // Iterate through the list of attachments and load each image
             attachments.forEach { attachment ->
                 loadImage(attachment.path)
             }
