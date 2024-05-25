@@ -77,6 +77,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         description = view.findViewById(R.id.taskDescription)
         taskDueDate = view.findViewById(R.id.taskDueDate)
         attachmentContainer = view.findViewById(R.id.attachmentContainer)
+        taskCreatedAt = view.findViewById(R.id.taskCreatedAt)
         confirmUpdateButton = view.findViewById(R.id.confirmUpdate)
         switchDone = view.findViewById(R.id.switchDone)
         updateCategorySpinner = view.findViewById(R.id.updateCategorySpinner)

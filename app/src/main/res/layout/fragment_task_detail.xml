@@ -67,11 +67,18 @@
         android:layout_height="wrap_content"
         android:text="Task Title" />
 
+    <TextView
+        android:id="@+id/taskCreatedAt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Task Created At" />
+
     <EditText
         android:id="@+id/taskDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Task Description" />
+
 
     <LinearLayout
         android:id="@+id/attachmentContainer"
