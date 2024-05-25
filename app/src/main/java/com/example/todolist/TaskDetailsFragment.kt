@@ -18,6 +18,8 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import android.Manifest
+import android.content.Context
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
@@ -103,6 +105,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
 
         confirmUpdateButton.setOnClickListener {
             updateTask(view)
+            hideKeyboard()
             requireActivity().supportFragmentManager.popBackStack()
         }
 
@@ -115,6 +118,10 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         }
     }
 
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
 
     private fun updateTask(view: View) {
         val updatedTitle = view.findViewById<EditText>(R.id.taskTitle).text.toString()
