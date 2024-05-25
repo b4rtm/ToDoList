@@ -5,6 +5,9 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
@@ -41,5 +44,12 @@ object DateTimeUtils {
     fun formatDateTime(millis: Long): String {
         val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
         return sdf.format(Date(millis))
+    }
+
+    private fun convertDateToMilis(date: String): Long {
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+        val dateTime = LocalDateTime.parse(date, formatter)
+        val instant = dateTime.atZone(ZoneId.systemDefault()).toInstant()
+        return instant.toEpochMilli()
     }
 }

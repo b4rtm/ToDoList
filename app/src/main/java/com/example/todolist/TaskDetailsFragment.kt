@@ -40,10 +40,13 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
     private lateinit var taskCategory : TextView
     private lateinit var attachmentContainer: LinearLayout
     private lateinit var confirmUpdateButton: ImageButton
+    private lateinit var calendarButton: ImageButton
     private lateinit var updateCategorySpinner: Spinner
 
     private lateinit var switchDone: SwitchCompat
     private lateinit var switchNotification: SwitchCompat
+
+    private var selectedDate = task.dueDate
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,7 +90,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         switchDone = view.findViewById(R.id.switchDone)
         updateCategorySpinner = view.findViewById(R.id.updateCategorySpinner)
         switchNotification = view.findViewById(R.id.switchNoti)
-
+        calendarButton = view.findViewById(R.id.calendarButton)
 
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
         val formatterWithoutSecs = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
@@ -112,7 +115,14 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         confirmUpdateButton.setOnClickListener {
             updateTask(view)
             requireActivity().supportFragmentManager.popBackStack()
+        }
 
+        calendarButton.setOnClickListener {
+            context?.let { it1 ->
+                DateTimeUtils.showDatePickerDialog(it1){ milis -> taskDueDate.text = DateTimeUtils.formatDateTime(milis)
+                    selectedDate = milis
+                }
+            }
         }
 
     }
@@ -123,8 +133,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         val updatedTitle = view.findViewById<EditText>(R.id.taskTitle).text.toString()
         val updatedDescription = view.findViewById<EditText>(R.id.taskDescription).text.toString()
 
-        val updatedDueDate = view.findViewById<TextView>(R.id.taskDueDate).text.toString()
-        val updatedDueDateInMilis = convertDateToMilis(updatedDueDate)
+        val updatedDueDateInMilis = selectedDate
 
         val updatedStatus : TaskStatus = if(switchDone.isChecked)
             TaskStatus.COMPLETED
@@ -147,12 +156,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         viewModel.updateTask(updatedTask)
     }
 
-    private fun convertDateToMilis(date: String): Long {
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
-        val dateTime = LocalDateTime.parse(date, formatter)
-        val instant = dateTime.atZone(ZoneId.systemDefault()).toInstant()
-        return instant.toEpochMilli()
-    }
+
 
     private fun loadImage(imageUri: String) {
         val imageView = ImageView(requireContext())

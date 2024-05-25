@@ -20,7 +20,14 @@
             android:layout_weight="1"
             android:layout_height="wrap_content" />
 
-
+        <ImageButton
+            android:id="@+id/calendarButton"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/calendar"/>
         <TextView
             android:id="@+id/taskDueDate"
             android:layout_width="0dp"
