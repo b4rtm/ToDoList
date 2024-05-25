@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
         adapter.setOnItemClickListener { task ->
             val bundle = Bundle()
             bundle.putLong("TASK_ID", task.id)
-            val taskDetailFragment = TaskDetailFragment(task)
+            val taskDetailFragment = TaskDetailsFragment(task)
             taskDetailFragment.arguments = bundle
 
             supportFragmentManager.beginTransaction()
@@ -88,8 +88,10 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
         attachments: MutableList<Uri>
     ) {
         val newTask = Task(title = title, description = description, dueDate = selectedDate, category = selectedCategory)
-        val attachmentEntities = attachments.map { uri ->
-            Attachment(taskId = newTask.id, path = uri.toString())
+        val attachmentEntities = attachments.mapNotNull { uri ->
+            ImageUtils.saveImageToInternalStorage(this, uri)?.let { path ->
+                Attachment(taskId = newTask.id, path = path)
+            }
         }
         viewModel.addTask(newTask, attachmentEntities)
         adapter.addTask(newTask)

@@ -21,7 +21,7 @@ import android.Manifest
 import android.os.Build
 
 
-class TaskDetailFragment(private val task: Task) : Fragment() {
+class TaskDetailsFragment(private val task: Task) : Fragment() {
 
     private lateinit var viewModel: TaskViewModel
     private lateinit var taskTitle : TextView
@@ -96,6 +96,7 @@ class TaskDetailFragment(private val task: Task) : Fragment() {
 
         Glide.with(this)
             .load(imageUri)
+            .override(300, 300)
             .into(imageView)
 
         attachmentContainer.addView(imageView)
