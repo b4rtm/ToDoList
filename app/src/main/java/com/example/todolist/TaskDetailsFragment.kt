@@ -119,12 +119,6 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         val categories = resources.getStringArray(R.array.categories)
         updateCategorySpinner.setSelection(categories.indexOf(task.category))
 
-        viewModel.getAttachmentsForTask(task.id).observe(viewLifecycleOwner) { attachments ->
-            attachmentContainer.removeAllViews() // Clear the old attachments
-            attachments.forEach { attachment ->
-                loadImage(attachment.path)
-            }
-        }
 
         confirmUpdateButton.setOnClickListener {
             updateTask(view)
