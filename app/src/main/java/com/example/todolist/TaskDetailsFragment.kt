@@ -45,10 +45,10 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
 
     private lateinit var switchDone: SwitchCompat
     private lateinit var switchNotification: SwitchCompat
+    private lateinit var addAttachmentButton: Button
 
     private var selectedDate = task.dueDate
     private var taskUpdateListener: OnTaskUpdateListener? = null
-
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -68,11 +68,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-
         requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_task_detail, container, false)
     }
 
@@ -80,11 +76,21 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            // Permission is granted, perform the action to load images
             loadImages()
         } else {
-            // Permission is denied, handle accordingly (e.g., show a message)
             Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private val pickImageLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let {
+            val attachment = Attachment(
+                taskId = task.id,
+                path = it.toString()
+            )
+            viewModel.addAttachment(attachment)
         }
     }
 
@@ -103,6 +109,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         updateCategorySpinner = view.findViewById(R.id.updateCategorySpinner)
         switchNotification = view.findViewById(R.id.switchNoti)
         calendarButton = view.findViewById(R.id.calendarButton)
+        addAttachmentButton = view.findViewById(R.id.addAttachmentButton)
 
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
         val formatterWithoutSecs = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
@@ -121,7 +128,6 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         val categories = resources.getStringArray(R.array.categories)
         updateCategorySpinner.setSelection(categories.indexOf(task.category))
 
-
         confirmUpdateButton.setOnClickListener {
             updateTask(view)
             hideKeyboard()
@@ -136,6 +142,11 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
                 }
             }
         }
+
+        addAttachmentButton.setOnClickListener {
+            pickImageLauncher.launch("*/*")
+        }
+
     }
 
     private fun hideKeyboard() {
@@ -156,7 +167,6 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         val updatedNotificationEnabled = switchDone.isChecked
         val updatedCategory = updateCategorySpinner.selectedItem.toString()
 
-
         val updatedTask = Task(
             id = task.id,
             title = updatedTitle,
@@ -171,20 +181,10 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         viewModel.updateTask(updatedTask)
     }
 
-
-
     private fun loadImage(attachment: Attachment) {
-
         val attachmentView = layoutInflater.inflate(R.layout.image_view, null)
         val imageView = attachmentView.findViewById<ImageView>(R.id.attachmentImageView)
         val deleteButton = attachmentView.findViewById<Button>(R.id.deleteButton)
-
-//        val layoutParams = LinearLayout.LayoutParams(
-//            LinearLayout.LayoutParams.WRAP_CONTENT,
-//            LinearLayout.LayoutParams.WRAP_CONTENT
-//        )
-//        layoutParams.setMargins(0, 0, 16, 0)
-//        imageView.layoutParams = layoutParams
 
         Glide.with(this)
             .load(attachment.path)
@@ -201,10 +201,14 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
 
     private fun loadImages() {
         viewModel.getAttachmentsForTaskLive(task.id).observe(viewLifecycleOwner) { attachments ->
-            attachmentContainer.removeAllViews()
-            attachments.forEach { attachment ->
-                loadImage(attachment)
-            }
+            updateAttachmentViews(attachments)
+        }
+    }
+
+    private fun updateAttachmentViews(attachments: List<Attachment>) {
+        attachmentContainer.removeAllViews()
+        attachments.forEach { attachment ->
+            loadImage(attachment)
         }
     }
 

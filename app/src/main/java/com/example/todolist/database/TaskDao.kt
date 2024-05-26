@@ -19,6 +19,9 @@ interface TaskDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAttachments(attachments: List<Attachment>)
 
+    @Insert
+    suspend fun insertAttachment(attachment: Attachment)
+
     @Query("SELECT * FROM tasks")
     suspend fun getAllTasks(): List<Task>
 

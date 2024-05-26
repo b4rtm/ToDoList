@@ -95,4 +95,10 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     fun getTask(taskId: Long): LiveData<Task> {
         return taskDao.getTaskById(taskId)
     }
+
+    fun addAttachment(attachment: Attachment) {
+        viewModelScope.launch(Dispatchers.IO) {
+            taskDao.insertAttachment(attachment)
+        }
+    }
 }
