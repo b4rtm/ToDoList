@@ -23,7 +23,10 @@ interface TaskDao {
     suspend fun getAllTasks(): List<Task>
 
     @Query("SELECT * FROM attachments WHERE taskId = :taskID")
-    fun getAttachmentsByTaskId(taskID: Long): LiveData<List<Attachment>>
+    suspend fun getAttachmentsByTaskId(taskID: Long): List<Attachment>
+
+    @Query("SELECT * FROM attachments WHERE taskId = :taskID")
+    fun getAttachmentsByTaskIdLive(taskID: Long): LiveData<List<Attachment>>
 
     @Query("SELECT * FROM tasks WHERE id = :taskId")
     fun getTaskById(taskId: Long): LiveData<Task>
@@ -33,4 +36,7 @@ interface TaskDao {
 
     @Delete
     suspend fun delete(task: Task)
+
+    @Delete
+    suspend fun deleteAttachment(attachment: Attachment)
 }

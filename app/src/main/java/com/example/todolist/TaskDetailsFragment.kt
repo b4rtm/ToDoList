@@ -21,10 +21,12 @@ import android.Manifest
 import android.content.Context
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
 import androidx.appcompat.widget.SwitchCompat
+import com.example.todolist.entities.Attachment
 import com.example.todolist.entities.TaskStatus
 import com.example.todolist.utils.DateTimeUtils
 
@@ -171,27 +173,37 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
 
 
 
-    private fun loadImage(imageUri: String) {
-        val imageView = ImageView(requireContext())
-        val layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-        layoutParams.setMargins(0, 0, 16, 0)
-        imageView.layoutParams = layoutParams
+    private fun loadImage(attachment: Attachment) {
+
+        val attachmentView = layoutInflater.inflate(R.layout.image_view, null)
+        val imageView = attachmentView.findViewById<ImageView>(R.id.attachmentImageView)
+        val deleteButton = attachmentView.findViewById<Button>(R.id.deleteButton)
+
+//        val layoutParams = LinearLayout.LayoutParams(
+//            LinearLayout.LayoutParams.WRAP_CONTENT,
+//            LinearLayout.LayoutParams.WRAP_CONTENT
+//        )
+//        layoutParams.setMargins(0, 0, 16, 0)
+//        imageView.layoutParams = layoutParams
 
         Glide.with(this)
-            .load(imageUri)
+            .load(attachment.path)
             .override(300, 300)
             .into(imageView)
 
-        attachmentContainer.addView(imageView)
+        deleteButton.setOnClickListener {
+            viewModel.deleteAttachment(attachment)
+            attachmentContainer.removeView(attachmentView)
+        }
+
+        attachmentContainer.addView(attachmentView)
     }
 
     private fun loadImages() {
-        viewModel.getAttachmentsForTask(task.id).observe(viewLifecycleOwner) { attachments ->
+        viewModel.getAttachmentsForTaskLive(task.id).observe(viewLifecycleOwner) { attachments ->
+            attachmentContainer.removeAllViews()
             attachments.forEach { attachment ->
-                loadImage(attachment.path)
+                loadImage(attachment)
             }
         }
     }

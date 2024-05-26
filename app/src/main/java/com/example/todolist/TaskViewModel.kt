@@ -74,8 +74,22 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun getAttachmentsForTask(taskId: Long): LiveData<List<Attachment>> {
-        return taskDao.getAttachmentsByTaskId(taskId)
+    fun getAttachmentsForTaskLive(taskId: Long): LiveData<List<Attachment>> {
+        return taskDao.getAttachmentsByTaskIdLive(taskId)
+    }
+
+    fun getAttachmentsForTask(taskId: Long): List<Attachment> {
+        var attachments: List<Attachment> = mutableListOf()
+        viewModelScope.launch {
+            attachments = taskDao.getAttachmentsByTaskId(taskId)
+        }
+        return attachments
+    }
+
+    fun deleteAttachment(attachment: Attachment) {
+        viewModelScope.launch(Dispatchers.IO) {
+            taskDao.deleteAttachment(attachment)
+        }
     }
 
     fun getTask(taskId: Long): LiveData<Task> {
