@@ -28,14 +28,14 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
     private lateinit var addTaskDialog: AddTaskDialog
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        getContent = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris: List<Uri> ->
-            addTaskDialog.setAttachmentUris(uris)
-        }
+        getContent =
+            registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris: List<Uri> ->
+                addTaskDialog.setAttachmentUris(uris)
+            }
 
         fab = findViewById(R.id.fab)
         recyclerView = findViewById(R.id.recyclerView)
@@ -46,22 +46,11 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
             viewModel.deleteTask(task)
         }
 
-
-
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         adapter.setOnItemClickListener { task ->
-            val bundle = Bundle()
-            bundle.putLong("TASK_ID", task.id)
-            val taskDetailFragment = TaskDetailsFragment(task)
-            taskDetailFragment.arguments = bundle
-
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.main, taskDetailFragment)
-                .addToBackStack(null)
-                .commit()
-            fab.hide()
+            onClickTaskAction(task)
         }
 
         fab.setOnClickListener {
@@ -84,6 +73,19 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
 
     }
 
+    private fun onClickTaskAction(task: Task) {
+        val bundle = Bundle()
+        bundle.putLong("TASK_ID", task.id)
+        val taskDetailFragment = TaskDetailsFragment(task)
+        taskDetailFragment.arguments = bundle
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main, taskDetailFragment)
+            .addToBackStack(null)
+            .commit()
+        fab.hide()
+    }
+
     override fun onTaskAdded(
         title: String,
         description: String,
@@ -91,7 +93,12 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
         selectedCategory: String,
         attachments: MutableList<Uri>
     ) {
-        val newTask = Task(title = title, description = description, dueDate = selectedDate, category = selectedCategory)
+        val newTask = Task(
+            title = title,
+            description = description,
+            dueDate = selectedDate,
+            category = selectedCategory
+        )
         val attachmentEntities = attachments.mapNotNull { uri ->
             ImageUtils.saveImageToInternalStorage(this, uri)?.let { path ->
                 Attachment(taskId = newTask.id, path = path)

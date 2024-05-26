@@ -13,7 +13,6 @@ data class Task(
     val status: TaskStatus = TaskStatus.IN_PROGRESS,
     val notificationEnabled: Boolean = true,
     val category: String? = null,
-//    val attachments: List<String>? = null,
 )
 
 enum class TaskStatus {

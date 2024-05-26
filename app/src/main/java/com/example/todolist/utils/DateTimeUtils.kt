@@ -35,9 +35,11 @@ object DateTimeUtils {
                         }.timeInMillis
 
                         callback(selectedMillis)
-                    }, currentHour, currentMinute, true)
+                    }, currentHour, currentMinute, true
+                )
                 timePickerDialog.show()
-            }, year, month, day)
+            }, year, month, day
+        )
         datePickerDialog.show()
     }
 

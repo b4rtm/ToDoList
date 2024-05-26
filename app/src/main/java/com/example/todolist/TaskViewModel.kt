@@ -32,9 +32,8 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         val allTasksLiveData = MutableLiveData<List<Task>>()
         viewModelScope.launch {
             val tasks = withContext(Dispatchers.IO) {
-                taskDao.getAllTasks() // Perform database operation on IO thread
+                taskDao.getAllTasks()
             }
-            // Update LiveData on the main thread
             withContext(Dispatchers.Main) {
                 allTasksLiveData.value = tasks
             }
@@ -44,10 +43,9 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
 
     fun addTask(task: Task, attachments: List<Attachment>) {
         viewModelScope.launch {
-            val taskId = taskDao.insert(task) // Use Coroutine for asynchronous task
+            val taskId = taskDao.insert(task)
             attachments.forEach { it.taskId = taskId }
             taskDao.insertAttachments(attachments)
-            // Update LiveData after adding task
             withContext(Dispatchers.Main) {
                 allTasks.value = taskDao.getAllTasks()
             }
@@ -57,7 +55,6 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     fun deleteTask(task: Task) {
         viewModelScope.launch {
             taskDao.delete(task)
-            // Update LiveData after deleting task
             withContext(Dispatchers.Main) {
                 allTasks.value = taskDao.getAllTasks()
             }
@@ -67,7 +64,6 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     fun updateTask(task: Task) {
         viewModelScope.launch {
             taskDao.update(task)
-            // Update LiveData after updating task
             withContext(Dispatchers.Main) {
                 allTasks.value = taskDao.getAllTasks()
             }

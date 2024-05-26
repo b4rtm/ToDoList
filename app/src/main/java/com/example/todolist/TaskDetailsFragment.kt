@@ -34,15 +34,14 @@ import com.example.todolist.utils.DateTimeUtils
 class TaskDetailsFragment(private val task: Task) : Fragment() {
 
     private lateinit var viewModel: TaskViewModel
-    private lateinit var taskTitle : TextView
-    private lateinit var description : TextView
-    private lateinit var taskCreatedAt : TextView
-    private lateinit var taskDueDate : TextView
+    private lateinit var taskTitle: TextView
+    private lateinit var description: TextView
+    private lateinit var taskCreatedAt: TextView
+    private lateinit var taskDueDate: TextView
     private lateinit var attachmentContainer: LinearLayout
     private lateinit var confirmUpdateButton: ImageButton
     private lateinit var calendarButton: ImageButton
     private lateinit var updateCategorySpinner: Spinner
-
     private lateinit var switchDone: SwitchCompat
     private lateinit var switchNotification: SwitchCompat
     private lateinit var addAttachmentButton: Button
@@ -111,22 +110,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         calendarButton = view.findViewById(R.id.calendarButton)
         addAttachmentButton = view.findViewById(R.id.addAttachmentButton)
 
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
-        val formatterWithoutSecs = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
-
-        taskTitle.text = task.title
-        description.text = task.description
-        taskCreatedAt.text = formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(task.createdAt), ZoneId.systemDefault()))
-        taskDueDate.text = formatterWithoutSecs.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(task.dueDate), ZoneId.systemDefault()))
-
-        if(task.notificationEnabled)
-            switchNotification.isChecked = true
-
-        if(task.status == TaskStatus.COMPLETED)
-            switchDone.isChecked = true
-
-        val categories = resources.getStringArray(R.array.categories)
-        updateCategorySpinner.setSelection(categories.indexOf(task.category))
+        initFields()
 
         confirmUpdateButton.setOnClickListener {
             updateTask(view)
@@ -137,7 +121,8 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
 
         calendarButton.setOnClickListener {
             context?.let { it1 ->
-                DateTimeUtils.showDatePickerDialog(it1){ milis -> taskDueDate.text = DateTimeUtils.formatDateTime(milis)
+                DateTimeUtils.showDatePickerDialog(it1) { milis ->
+                    taskDueDate.text = DateTimeUtils.formatDateTime(milis)
                     selectedDate = milis
                 }
             }
@@ -149,8 +134,38 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
 
     }
 
+    private fun initFields() {
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
+        val formatterWithoutSecs = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+
+        taskTitle.text = task.title
+        description.text = task.description
+        taskCreatedAt.text = formatter.format(
+            LocalDateTime.ofInstant(
+                Instant.ofEpochMilli(task.createdAt),
+                ZoneId.systemDefault()
+            )
+        )
+        taskDueDate.text = formatterWithoutSecs.format(
+            LocalDateTime.ofInstant(
+                Instant.ofEpochMilli(task.dueDate),
+                ZoneId.systemDefault()
+            )
+        )
+
+        if (task.notificationEnabled)
+            switchNotification.isChecked = true
+
+        if (task.status == TaskStatus.COMPLETED)
+            switchDone.isChecked = true
+
+        val categories = resources.getStringArray(R.array.categories)
+        updateCategorySpinner.setSelection(categories.indexOf(task.category))
+    }
+
     private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
@@ -159,7 +174,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         val updatedDescription = view.findViewById<EditText>(R.id.taskDescription).text.toString()
         val updatedDueDateInMilis = selectedDate
 
-        val updatedStatus : TaskStatus = if(switchDone.isChecked)
+        val updatedStatus: TaskStatus = if (switchDone.isChecked)
             TaskStatus.COMPLETED
         else
             TaskStatus.IN_PROGRESS

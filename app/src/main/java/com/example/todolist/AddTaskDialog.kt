@@ -56,7 +56,8 @@ class AddTaskDialog(
         attachmentsContainer = findViewById(R.id.attachmentsContainer)
 
         val categories = context.resources.getStringArray(R.array.categories)
-        val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, categories)
+        val adapter =
+            ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, categories)
         categorySpinner.adapter = adapter
 
         addButton.setOnClickListener {
@@ -65,11 +66,21 @@ class AddTaskDialog(
             val selectedCategory = categorySpinner.selectedItem as String
 
             if (selectedDate == 0L) {
-                Toast.makeText(context, "Please select a date and time for the task", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Please select a date and time for the task",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
             }
 
-            listener?.onTaskAdded(title, description, selectedDate, selectedCategory, attachmentUris)
+            listener?.onTaskAdded(
+                title,
+                description,
+                selectedDate,
+                selectedCategory,
+                attachmentUris
+            )
             dismiss()
         }
 
