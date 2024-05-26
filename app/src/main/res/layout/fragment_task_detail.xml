@@ -4,6 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true"
     android:layout_marginLeft="15dp">
 
     <LinearLayout
