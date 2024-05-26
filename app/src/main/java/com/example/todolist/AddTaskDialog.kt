@@ -20,7 +20,6 @@ class AddTaskDialog(
     private lateinit var titleEditText: EditText
     private lateinit var descriptionEditText: EditText
     private lateinit var addButton: Button
-    private lateinit var cancelButton: Button
     private lateinit var dateButton: Button
     private var selectedDate: Long = 0
     private lateinit var selectedDateTextView: TextView
@@ -48,7 +47,6 @@ class AddTaskDialog(
         titleEditText = findViewById(R.id.titleEditText)
         descriptionEditText = findViewById(R.id.descriptionEditText)
         addButton = findViewById(R.id.addButton)
-        cancelButton = findViewById(R.id.cancelButton)
         dateButton = findViewById(R.id.dateButton)
         selectedDateTextView = findViewById(R.id.selectedDateTextView)
         categorySpinner = findViewById(R.id.categorySpinner)
@@ -74,10 +72,6 @@ class AddTaskDialog(
 
         selectImageButton.setOnClickListener {
             launchFilePicker()
-        }
-
-        cancelButton.setOnClickListener {
-            dismiss()
         }
 
         dateButton.setOnClickListener {
