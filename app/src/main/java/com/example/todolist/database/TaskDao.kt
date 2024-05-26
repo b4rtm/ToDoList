@@ -20,13 +20,13 @@ interface TaskDao {
     suspend fun insertAttachments(attachments: List<Attachment>)
 
     @Query("SELECT * FROM tasks")
-    fun getAllTasks(): LiveData<List<Task>>
-
-//    @Query("SELECT * FROM tasks WHERE id = :id")
-//    suspend fun getTodoById(id: Long): LiveData<Task>?
+    suspend fun getAllTasks(): List<Task>
 
     @Query("SELECT * FROM attachments WHERE taskId = :taskID")
     fun getAttachmentsByTaskId(taskID: Long): LiveData<List<Attachment>>
+
+    @Query("SELECT * FROM tasks WHERE id = :taskId")
+    fun getTaskById(taskId: Long): LiveData<Task>
 
     @Update
     suspend fun update(task: Task)

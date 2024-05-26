@@ -2,6 +2,7 @@ package com.example.todolist;
 
 import android.app.AlertDialog
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.entities.Task
 
-class TaskAdapter(private val taskList: MutableList<Task>) : RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
+class TaskAdapter(private var taskList: List<Task>) : RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
 
         private var onDeleteClickListener: ((Task) -> Unit)? = null
         private var onItemClickListener: ((Task) -> Unit)? = null
@@ -38,7 +39,6 @@ class TaskAdapter(private val taskList: MutableList<Task>) : RecyclerView.Adapte
                                 }
                         }
                 }
-
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -52,8 +52,6 @@ class TaskAdapter(private val taskList: MutableList<Task>) : RecyclerView.Adapte
                 holder.descriptionTextView.text = task.description
                 holder.deleteButton.setOnClickListener {
                         showConfirmationDialog(holder.itemView.context, task, position)                }
-
-
         }
 
         override fun getItemCount(): Int {
@@ -61,16 +59,9 @@ class TaskAdapter(private val taskList: MutableList<Task>) : RecyclerView.Adapte
         }
 
         fun updateTasks(newList: List<Task>) {
-                taskList.clear()
-                taskList.addAll(newList)
+                taskList = newList
                 notifyDataSetChanged()
         }
-
-        fun addTask(task: Task) {
-                taskList.add(task)
-                notifyDataSetChanged()
-        }
-
 
 
         private fun showConfirmationDialog(context: Context, task: Task, position: Int) {
@@ -78,7 +69,6 @@ class TaskAdapter(private val taskList: MutableList<Task>) : RecyclerView.Adapte
                         .setMessage("Are you sure you want to delete this task?")
                         .setPositiveButton("Delete") { _, _ ->
                                 onDeleteClickListener?.invoke(task) // Call listener if set, passing task
-                                taskList.removeAt(position) // Remove task from local list after confirmation
                                 notifyItemRemoved(position) // Notify adapter about item removal
                         }
                         .setNegativeButton("Cancel") { dialog, _ ->

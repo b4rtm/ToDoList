@@ -2,6 +2,7 @@ package com.example.todolist
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -15,7 +16,8 @@ import com.example.todolist.entities.Task
 import com.example.todolist.utils.ImageUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
+class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
+    TaskDetailsFragment.OnTaskUpdateListener {
 
     private lateinit var fab: FloatingActionButton
     private lateinit var recyclerView: RecyclerView
@@ -80,6 +82,7 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
         viewModel.allTasks.observe(this) { tasks ->
             adapter.updateTasks(tasks)
         }
+
     }
 
     override fun onTaskAdded(
@@ -96,7 +99,6 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
             }
         }
         viewModel.addTask(newTask, attachmentEntities)
-        adapter.addTask(newTask)
     }
 
 
@@ -107,6 +109,12 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener {
     override fun onBackPressed() {
         super.onBackPressed()
         fab.show()
+    }
+
+    override fun onTaskUpdated() {
+        viewModel.getAllTasks().observe(this) { tasks ->
+            adapter.updateTasks(tasks)
+        }
     }
 
 }

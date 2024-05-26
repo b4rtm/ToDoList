@@ -19,6 +19,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import android.Manifest
 import android.content.Context
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
@@ -44,6 +45,22 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
     private lateinit var switchNotification: SwitchCompat
 
     private var selectedDate = task.dueDate
+    private var taskUpdateListener: OnTaskUpdateListener? = null
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnTaskUpdateListener) {
+            taskUpdateListener = context
+        } else {
+            throw RuntimeException("$context must implement OnTaskUpdateListener")
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        taskUpdateListener = null
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,7 +91,6 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
 
         viewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
 
-
         taskTitle = view.findViewById(R.id.taskTitle)
         description = view.findViewById(R.id.taskDescription)
         taskDueDate = view.findViewById(R.id.taskDueDate)
@@ -103,10 +119,18 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         val categories = resources.getStringArray(R.array.categories)
         updateCategorySpinner.setSelection(categories.indexOf(task.category))
 
+        viewModel.getAttachmentsForTask(task.id).observe(viewLifecycleOwner) { attachments ->
+            attachmentContainer.removeAllViews() // Clear the old attachments
+            attachments.forEach { attachment ->
+                loadImage(attachment.path)
+            }
+        }
+
         confirmUpdateButton.setOnClickListener {
             updateTask(view)
             hideKeyboard()
             requireActivity().supportFragmentManager.popBackStack()
+            taskUpdateListener?.onTaskUpdated()
         }
 
         calendarButton.setOnClickListener {
@@ -136,6 +160,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         val updatedNotificationEnabled = switchDone.isChecked
         val updatedCategory = updateCategorySpinner.selectedItem.toString()
 
+
         val updatedTask = Task(
             id = task.id,
             title = updatedTitle,
@@ -143,9 +168,10 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
             status = updatedStatus,
             dueDate = updatedDueDateInMilis,
             category = updatedCategory,
-            notificationEnabled = updatedNotificationEnabled,
+            notificationEnabled = updatedNotificationEnabled
         )
 
+        Log.d("TaskDetailsFragment", "Updating task: $updatedTask")
         viewModel.updateTask(updatedTask)
     }
 
@@ -176,4 +202,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         }
     }
 
+    interface OnTaskUpdateListener {
+        fun onTaskUpdated()
+    }
 }
