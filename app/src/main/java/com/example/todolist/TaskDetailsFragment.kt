@@ -90,6 +90,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
                 path = it.toString()
             )
             viewModel.addAttachment(attachment)
+            taskUpdateListener?.onTaskUpdated()
         }
     }
 
