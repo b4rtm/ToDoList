@@ -25,6 +25,9 @@ interface TaskDao {
     @Query("SELECT * FROM tasks")
     suspend fun getAllTasks(): List<Task>
 
+    @Query("SELECT * FROM tasks ORDER BY dueDate ASC")
+    suspend fun getAllTasksSortedByDate(): List<Task>
+
     @Query("SELECT * FROM attachments WHERE taskId = :taskID")
     suspend fun getAttachmentsByTaskId(taskID: Long): List<Attachment>
 

@@ -42,6 +42,7 @@ dependencies {
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0-alpha01")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
     implementation("com.github.bumptech.glide:glide:4.14.2")
     kapt ("com.github.bumptech.glide:compiler:4.14.2")
     implementation(libs.androidx.core.ktx)

@@ -24,7 +24,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
             .build()
         taskDao = database.taskDao()
         viewModelScope.launch {
-            allTasks.postValue(taskDao.getAllTasks())
+            allTasks.postValue(taskDao.getAllTasksSortedByDate())
         }
     }
 
@@ -32,7 +32,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         val allTasksLiveData = MutableLiveData<List<Task>>()
         viewModelScope.launch {
             val tasks = withContext(Dispatchers.IO) {
-                taskDao.getAllTasks()
+                taskDao.getAllTasksSortedByDate()
             }
             withContext(Dispatchers.Main) {
                 allTasksLiveData.value = tasks
@@ -47,7 +47,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
             attachments.forEach { it.taskId = taskId }
             taskDao.insertAttachments(attachments)
             withContext(Dispatchers.Main) {
-                allTasks.value = taskDao.getAllTasks()
+                allTasks.value = taskDao.getAllTasksSortedByDate()
             }
         }
     }
@@ -56,7 +56,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             taskDao.delete(task)
             withContext(Dispatchers.Main) {
-                allTasks.value = taskDao.getAllTasks()
+                allTasks.value = taskDao.getAllTasksSortedByDate()
             }
         }
     }
@@ -65,7 +65,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             taskDao.update(task)
             withContext(Dispatchers.Main) {
-                allTasks.value = taskDao.getAllTasks()
+                allTasks.value = taskDao.getAllTasksSortedByDate()
             }
         }
     }
