@@ -2,6 +2,9 @@ package com.example.todolist
 
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.EditText
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +29,7 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
 
     private lateinit var getContent: ActivityResultLauncher<String>
     private lateinit var addTaskDialog: AddTaskDialog
+    private lateinit var searchEditText: EditText
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +43,7 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
 
         fab = findViewById(R.id.fab)
         recyclerView = findViewById(R.id.recyclerView)
+        searchEditText = findViewById(R.id.editTextSearch)
         viewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
 
         adapter = TaskAdapter(ArrayList())
@@ -71,6 +76,23 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
             adapter.updateTasks(tasks)
         }
 
+        searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterTasks(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+    }
+
+    private fun filterTasks(query: String) {
+        viewModel.allTasks.observe(this) { tasks ->
+            val filteredTasks = tasks.filter {
+                it.title.contains(query, ignoreCase = true)
+            }
+            adapter.updateTasks(filteredTasks)
+        }
     }
 
     private fun onClickTaskAction(task: Task) {

@@ -29,7 +29,7 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/editTextCity"
+                    android:id="@+id/editTextSearch"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:inputType="text"
