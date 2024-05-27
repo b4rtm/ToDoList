@@ -32,6 +32,16 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/attachmentImageView"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_gravity="center_vertical"
+        android:adjustViewBounds="true"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/attach"/>
+
     <ImageButton
         android:id="@+id/deleteButton"
         android:layout_width="45dp"

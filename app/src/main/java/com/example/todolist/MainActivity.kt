@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
         searchEditText = findViewById(R.id.editTextSearch)
         viewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
 
-        adapter = TaskAdapter(ArrayList())
+        adapter = TaskAdapter(ArrayList(), viewModel)
         adapter.setOnDeleteClickListener { task ->
             viewModel.deleteTask(task)
         }

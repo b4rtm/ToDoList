@@ -8,11 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.entities.Task
 
-class TaskAdapter(private var taskList: List<Task>) :
+class TaskAdapter(private var taskList: List<Task>, private val viewModel: TaskViewModel) :
     RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
 
     private var onDeleteClickListener: ((Task) -> Unit)? = null
@@ -31,6 +32,7 @@ class TaskAdapter(private var taskList: List<Task>) :
         val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
         val descriptionTextView: TextView = itemView.findViewById(R.id.descriptionTextView)
         val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
+        val attachmentImageView: ImageView = itemView.findViewById(R.id.attachmentImageView)
 
         init {
             itemView.setOnClickListener {
@@ -53,6 +55,10 @@ class TaskAdapter(private var taskList: List<Task>) :
         holder.descriptionTextView.text = task.description
         holder.deleteButton.setOnClickListener {
             showConfirmationDialog(holder.itemView.context, task, position)
+        }
+
+        viewModel.hasAttachments(task.id).observeForever { hasAttachments ->
+            holder.attachmentImageView.visibility = if (hasAttachments) View.VISIBLE else View.GONE
         }
     }
 

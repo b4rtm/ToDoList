@@ -97,4 +97,8 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
             taskDao.insertAttachment(attachment)
         }
     }
+
+    fun hasAttachments(taskId: Long): LiveData<Boolean> {
+        return taskDao.hasAttachments(taskId)
+    }
 }

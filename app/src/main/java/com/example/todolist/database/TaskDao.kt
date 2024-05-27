@@ -34,6 +34,9 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE id = :taskId")
     fun getTaskById(taskId: Long): LiveData<Task>
 
+    @Query("SELECT COUNT(*) > 0 FROM attachments WHERE taskId = :taskId")
+    fun hasAttachments(taskId: Long): LiveData<Boolean>
+
     @Update
     suspend fun update(task: Task)
 
