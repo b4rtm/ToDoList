@@ -1,6 +1,7 @@
-package com.example.todolist;
+package com.example.todolist
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,6 +11,7 @@ import com.example.todolist.database.TaskDao
 import com.example.todolist.database.TaskDatabase
 import com.example.todolist.entities.Attachment
 import com.example.todolist.entities.Task
+import com.example.todolist.entities.TaskStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -17,56 +19,66 @@ import kotlinx.coroutines.withContext
 class TaskViewModel(application: Application) : AndroidViewModel(application) {
 
     private val taskDao: TaskDao
-    var allTasks = MutableLiveData<List<Task>>()
+    val allTasks = MutableLiveData<List<Task>>()
 
     init {
         val database = Room.databaseBuilder(application, TaskDatabase::class.java, "task_database")
             .build()
         taskDao = database.taskDao()
+        loadTasks()
+    }
+
+    fun loadTasks() {
         viewModelScope.launch {
-            allTasks.postValue(taskDao.getAllTasksSortedByDate())
+            val tasks = withContext(Dispatchers.IO) {
+                taskDao.getAllTasks()
+            }
+            filterAndSortTasks(tasks)
         }
     }
 
+    private fun filterAndSortTasks(tasks: List<Task>) {
+        val sharedPreferences = getApplication<Application>().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+        val hideCompleted = sharedPreferences.getBoolean("hideCompleted", false)
+        val selectedCategory = sharedPreferences.getString("selectedCategory", "")
+        val filteredTasks = tasks.filter { task ->
+            (!hideCompleted || task.status==TaskStatus.IN_PROGRESS) &&
+                    (selectedCategory.isNullOrEmpty() || task.category == selectedCategory)
+        }.sortedBy { it.dueDate }
+
+        allTasks.postValue(filteredTasks)
+    }
+
     fun getAllTasks(): LiveData<List<Task>> {
-        val allTasksLiveData = MutableLiveData<List<Task>>()
-        viewModelScope.launch {
-            val tasks = withContext(Dispatchers.IO) {
-                taskDao.getAllTasksSortedByDate()
-            }
-            withContext(Dispatchers.Main) {
-                allTasksLiveData.value = tasks
-            }
-        }
-        return allTasksLiveData
+        return allTasks
     }
 
     fun addTask(task: Task, attachments: List<Attachment>) {
         viewModelScope.launch {
-            val taskId = taskDao.insert(task)
+            val taskId = withContext(Dispatchers.IO) {
+                taskDao.insert(task)
+            }
             attachments.forEach { it.taskId = taskId }
             taskDao.insertAttachments(attachments)
-            withContext(Dispatchers.Main) {
-                allTasks.value = taskDao.getAllTasksSortedByDate()
-            }
+            loadTasks()
         }
     }
 
     fun deleteTask(task: Task) {
         viewModelScope.launch {
-            taskDao.delete(task)
-            withContext(Dispatchers.Main) {
-                allTasks.value = taskDao.getAllTasksSortedByDate()
+            withContext(Dispatchers.IO) {
+                taskDao.delete(task)
             }
+            loadTasks()
         }
     }
 
     fun updateTask(task: Task) {
         viewModelScope.launch {
-            taskDao.update(task)
-            withContext(Dispatchers.Main) {
-                allTasks.value = taskDao.getAllTasksSortedByDate()
+            withContext(Dispatchers.IO) {
+                taskDao.update(task)
             }
+            loadTasks()
         }
     }
 

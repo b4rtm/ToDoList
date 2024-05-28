@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
+import android.widget.ImageButton
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +20,7 @@ import com.example.todolist.utils.ImageUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
-    TaskDetailsFragment.OnTaskUpdateListener {
+    TaskDetailsFragment.OnTaskUpdateListener, SettingsDialogFragment.SettingsDialogListener {
 
     private lateinit var fab: FloatingActionButton
     private lateinit var recyclerView: RecyclerView
@@ -30,6 +31,11 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
     private lateinit var getContent: ActivityResultLauncher<String>
     private lateinit var addTaskDialog: AddTaskDialog
     private lateinit var searchEditText: EditText
+    private lateinit var settingsButton: ImageButton
+
+    override fun onSettingsSaved() {
+        viewModel.loadTasks()
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +50,7 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
         fab = findViewById(R.id.fab)
         recyclerView = findViewById(R.id.recyclerView)
         searchEditText = findViewById(R.id.editTextSearch)
+        settingsButton = findViewById(R.id.settingsButton)
         viewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
 
         adapter = TaskAdapter(ArrayList(), viewModel)
@@ -83,6 +90,11 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
             }
             override fun afterTextChanged(s: Editable?) {}
         })
+
+        settingsButton.setOnClickListener {
+            val settingsDialog = SettingsDialogFragment()
+            settingsDialog.show(supportFragmentManager, "SettingsDialogFragment")
+        }
 
     }
 
