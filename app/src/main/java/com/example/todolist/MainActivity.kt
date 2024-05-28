@@ -49,7 +49,6 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         getContent =
             registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris: List<Uri> ->
                 addTaskDialog.setAttachmentUris(uris)
