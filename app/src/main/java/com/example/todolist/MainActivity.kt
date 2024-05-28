@@ -1,6 +1,11 @@
 package com.example.todolist
 
+import android.app.AlertDialog
+import android.app.NotificationManager
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +14,8 @@ import android.widget.ImageButton
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContentProviderCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +27,7 @@ import com.example.todolist.database.TaskDatabase
 import com.example.todolist.entities.Attachment
 import com.example.todolist.entities.Task
 import com.example.todolist.utils.ImageUtils
+import com.example.todolist.utils.NotificationUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
@@ -55,7 +63,6 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
         searchEditText = findViewById(R.id.editTextSearch)
         settingsButton = findViewById(R.id.settingsButton)
         viewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
-
         adapter = TaskAdapter(ArrayList(), viewModel)
         adapter.setOnDeleteClickListener { task ->
             viewModel.deleteTask(task)
@@ -67,6 +74,10 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
         adapter.setOnItemClickListener { task ->
             onClickTaskAction(task)
         }
+
+        NotificationUtils.createNotificationChannel(this)
+        handleNotificationIntent(intent)
+
 
         fab.setOnClickListener {
             addTaskDialog = AddTaskDialog(this) {
@@ -99,7 +110,78 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
             settingsDialog.show(supportFragmentManager, "SettingsDialogFragment")
         }
 
+        if (!checkNotificationPermission()) {
+            showNotificationPermissionDialog()
+        }
     }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.let {
+            handleNotificationIntent(it)
+        }
+    }
+
+    private fun handleNotificationIntent(intent: Intent) {
+        if (intent.getBooleanExtra("navigate_to_task", false)) {
+            val taskId = intent.getLongExtra("task_id", -1)
+            if (taskId != -1L) {
+                navigateToTask(taskId)
+            }
+        }
+    }
+
+    private fun navigateToTask(taskId: Long) {
+        viewModel.getTask(taskId).observe(this) { task ->
+            task?.let {
+                val bundle = Bundle()
+                bundle.putLong("TASK_ID", task.id)
+                val taskDetailFragment = TaskDetailsFragment(task)
+                taskDetailFragment.arguments = bundle
+
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.main, taskDetailFragment)
+                    .addToBackStack(null)
+                    .commit()
+                fab.hide()
+            }
+        }
+    }
+
+    private fun showNotificationPermissionDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Enable Notifications")
+            .setMessage("Do you want to enable notifications for this app?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                navigateToNotificationSettings()
+                dialog.dismiss()
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+    private fun checkNotificationPermission(): Boolean {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManager.areNotificationsEnabled()
+        } else {
+            NotificationManagerCompat.from(this).areNotificationsEnabled()
+        }
+    }
+
+    private fun navigateToNotificationSettings() {
+        val intent = Intent().apply {
+            action = "android.settings.APP_NOTIFICATION_SETTINGS"
+            putExtra("app_package", packageName)
+            putExtra("app_uid", applicationInfo.uid)
+            putExtra("android.provider.extra.APP_PACKAGE", packageName)
+        }
+        startActivity(intent)
+    }
+
 
     private fun filterTasks(query: String) {
         viewModel.allTasks.observe(this) { tasks ->
@@ -141,7 +223,12 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
                 Attachment(taskId = newTask.id, path = path)
             }
         }
-        viewModel.addTask(newTask, attachmentEntities)
+        viewModel.addTask(newTask, attachmentEntities).observe(this) { taskId ->
+            if (taskId != null) {
+                newTask.id = taskId
+                NotificationUtils.setNotification(this.applicationContext, newTask)
+            }
+        }
     }
 
 

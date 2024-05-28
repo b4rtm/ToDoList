@@ -2,6 +2,7 @@ package com.example.todolist
 
 import android.app.Application
 import android.content.Context
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,6 +13,7 @@ import com.example.todolist.database.TaskDatabase
 import com.example.todolist.entities.Attachment
 import com.example.todolist.entities.Task
 import com.example.todolist.entities.TaskStatus
+import com.example.todolist.utils.NotificationUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -20,12 +22,16 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
 
     private val taskDao: TaskDao
     val allTasks = MutableLiveData<List<Task>>()
+//    private val notificationScheduler: NotificationScheduler = NotificationScheduler(application)
+
 
     init {
         val database = Room.databaseBuilder(application, TaskDatabase::class.java, "task_database")
             .build()
         taskDao = database.taskDao()
         loadTasks()
+//        notificationScheduler.scheduleAllNotifications(allTasks)
+
     }
 
     fun loadTasks() {
@@ -53,15 +59,22 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         return allTasks
     }
 
-    fun addTask(task: Task, attachments: List<Attachment>) {
+    fun addTask(task: Task, attachments: List<Attachment>): LiveData<Long> {
+        var result = MutableLiveData<Long>()
+
         viewModelScope.launch {
-            val taskId = withContext(Dispatchers.IO) {
-                taskDao.insert(task)
+            val taskId =  withContext(Dispatchers.IO) {
+                 taskDao.insert(task)
             }
+            withContext(Dispatchers.Main) {
+//                notificationScheduler.scheduleNotification(task)
+            }
+            result.postValue(taskId)
             attachments.forEach { it.taskId = taskId }
             taskDao.insertAttachments(attachments)
             loadTasks()
         }
+        return result
     }
 
     fun deleteTask(task: Task) {
@@ -77,6 +90,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 taskDao.update(task)
+//                notificationScheduler.scheduleNotification(task)
             }
             loadTasks()
         }
@@ -113,4 +127,6 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     fun hasAttachments(taskId: Long): LiveData<Boolean> {
         return taskDao.hasAttachments(taskId)
     }
+
+
 }
