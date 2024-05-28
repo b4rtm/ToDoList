@@ -5,51 +5,40 @@
     android:orientation="vertical"
     android:background="@color/white"
     android:clickable="true"
-    android:focusable="true"
-    android:layout_marginLeft="15dp">
+    android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="1dp"
-        android:background="?attr/colorPrimary">
+        android:background="#FAFAFA">
+
+        <Spinner
+            android:id="@+id/updateCategorySpinner"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:entries="@array/categories"
+            android:layout_marginEnd="10dp"/>
+
+
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchDone"
             android:layout_width="0sp"
             android:text="Done"
             android:layout_weight="1"
-            android:layout_height="wrap_content" />
-
-        <ImageButton
-            android:id="@+id/calendarButton"
-            android:layout_width="0dp"
-            android:layout_weight="0.5"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:scaleType="fitCenter"
-            android:src="@drawable/calendar"/>
-        <TextView
-            android:id="@+id/taskDueDate"
-            android:layout_width="0dp"
-            android:layout_weight="1.5"
             android:layout_height="wrap_content"
-            android:text="Task Due Date" />
-
-        <Spinner
-            android:id="@+id/updateCategorySpinner"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:layout_height="wrap_content"
-            android:entries="@array/categories"/>
+            android:layout_marginEnd="10dp"/>
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchNoti"
             android:layout_width="0sp"
             android:layout_weight="1"
-            android:text="Noti"
-            android:layout_height="wrap_content" />
+            android:text="Notify"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"/>
 
         <ImageButton
             android:id="@+id/confirmUpdate"
@@ -58,28 +47,84 @@
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
-            android:src="@drawable/confirm"/>
+            android:src="@drawable/confirm"
+            android:layout_marginEnd="10dp"/>
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/taskTitle"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Task Title" />
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="15dp">
 
-    <TextView
-        android:id="@+id/taskCreatedAt"
-        android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+        <EditText
+            android:id="@+id/taskTitle"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Task Title" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginRight="20dp"
+            android:gravity="center">
+            <ImageButton
+                android:id="@+id/calendarButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/calendar" />
+            <TextView
+                android:id="@+id/taskDueDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Due date" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Task Created At" />
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="15dp">
+
+        <TextView
+            android:id="@+id/taskCreatedAtDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Task created at: " />
+
+        <TextView
+            android:id="@+id/taskCreatedAt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="At" />
+    </LinearLayout>
+
+
 
     <EditText
         android:id="@+id/taskDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Task Description" />
+        android:text="Task Description"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="15dp"/>
 
 
     <LinearLayout
@@ -92,7 +137,11 @@
         android:id="@+id/addAttachmentButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Attachment" />
+        android:text="Add Attachment"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="45dp"
+        android:layout_gravity="center"
+        android:backgroundTint="#26A629"/>
 
 
 </LinearLayout>
