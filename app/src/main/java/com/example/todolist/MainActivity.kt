@@ -170,7 +170,7 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
 
 
     private fun filterTasks(query: String) {
-        viewModel.allTasks.observe(this) { tasks ->
+        viewModel.getAllTasks().observe(this) { tasks ->
             val filteredTasks = tasks.filter {
                 it.title.contains(query, ignoreCase = true)
             }
@@ -229,7 +229,7 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
     }
 
     override fun onTaskUpdated() {
-        viewModel.getAllTasks().observe(this) { tasks ->
+        viewModel.loadTasks().observe(this) { tasks ->
             adapter.updateTasks(tasks)
         }
     }
