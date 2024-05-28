@@ -1,4 +1,4 @@
-package com.example.todolist
+package com.example.todolist.components
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,6 +26,8 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
 import androidx.appcompat.widget.SwitchCompat
+import com.example.todolist.R
+import com.example.todolist.TaskViewModel
 import com.example.todolist.entities.Attachment
 import com.example.todolist.entities.TaskStatus
 import com.example.todolist.utils.DateTimeUtils

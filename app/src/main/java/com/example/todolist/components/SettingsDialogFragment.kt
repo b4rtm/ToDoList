@@ -1,16 +1,15 @@
-package com.example.todolist
+package com.example.todolist.components
 
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import androidx.appcompat.app.AlertDialog
-import android.view.LayoutInflater
-import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.ArrayAdapter
+import com.example.todolist.R
 
 class SettingsDialogFragment : DialogFragment() {
 

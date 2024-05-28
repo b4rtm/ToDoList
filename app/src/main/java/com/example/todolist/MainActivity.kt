@@ -13,6 +13,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
+import com.example.todolist.components.AddTaskDialog
+import com.example.todolist.components.SettingsDialogFragment
+import com.example.todolist.components.TaskDetailsFragment
 import com.example.todolist.database.TaskDatabase
 import com.example.todolist.entities.Attachment
 import com.example.todolist.entities.Task

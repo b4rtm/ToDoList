@@ -1,5 +1,5 @@
 // AddTaskDialog.kt
-package com.example.todolist
+package com.example.todolist.components
 
 import android.app.Dialog
 import android.content.Context
@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import com.example.todolist.R
 import com.example.todolist.utils.DateTimeUtils
 
 class AddTaskDialog(
