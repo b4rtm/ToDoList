@@ -1,6 +1,5 @@
 package com.example.todolist.utils
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -8,8 +7,6 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.todolist.MainActivity
 import com.example.todolist.R
@@ -19,22 +16,17 @@ import java.time.ZoneId
 
 object NotificationUtils {
 
-    private const val CHANNEL_ID = "ToDoAppNotificationChannel"
-    private const val CHANNEL_NAME = "To Do Notifications"
+    private const val channelName = "todo"
+    const val id = "NotificationChannel"
+
 
     fun createNotificationChannel(context: Context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance)
-            val notificationManager =
-                context.getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(channel)
-        }
+        val channel = NotificationChannel(id, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+        val notificationManager =
+            context.getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
     }
 
-
-
-    @SuppressLint("ScheduleExactAlarm")
     fun setNotification(context: Context, task: Task) {
         if (task.notificationEnabled) {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -42,7 +34,6 @@ object NotificationUtils {
             val alarmIntent = Intent(context, AlarmReceiver::class.java).apply {
                 putExtra("task_id", task.id)
                 putExtra("task_title", task.title)
-                putExtra("task_description", task.description)
             }
 
             val pendingIntent = PendingIntent.getBroadcast(
@@ -52,36 +43,34 @@ object NotificationUtils {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
-            println(task.id)
-            val notificationTime = getNotificationTime(context)
+            val sharedPreferences = context.getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+            var notificationTime = sharedPreferences.getInt("notificationTime", 1)
+            notificationTime = (notificationTime * 60 * 1000L).toInt()
 
             val executionTime = task.dueDate
 //            val notifyTime = executionTime - notificationTime
-            val notifyTime = LocalDateTime.now().plusSeconds(10).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            val notifyTime = LocalDateTime.now().plusSeconds(4).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
-//            if(notifyTime > 0)
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, notifyTime, pendingIntent)
+            if (alarmManager.canScheduleExactAlarms()) {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, notifyTime, pendingIntent)
+            }
         }
     }
 
-    private fun getNotificationTime(context: Context): Long {
-        val prefs = context.getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
-        val notificationTime = prefs.getInt("notificationTime", 1)
-        return notificationTime * 60 * 1000L
-    }
+
 
     class AlarmReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             context?.let {
                 val taskId = intent?.getLongExtra("task_id", 0L) ?: 0L
                 val taskTitle = intent?.getStringExtra("task_title")
-                val taskDescription  = intent?.getStringExtra("task_description")
-                showNotification(it, taskId, taskTitle ?: "Task Title", taskDescription ?: "Task Description")
+                if (taskTitle != null) {
+                    showNotification(it, taskId, taskTitle)
+                }
             }
         }
 
-        private fun showNotification(context: Context, taskId: Long, taskTitle: String, taskDescription: String) {
-            Log.d("NotificationUtils", "showNotification called with taskId: $taskId")
+        private fun showNotification(context: Context, taskId: Long, taskTitle: String) {
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
             val intent = Intent(context, MainActivity::class.java).apply {
@@ -92,16 +81,15 @@ object NotificationUtils {
 
             val pendingIntent = PendingIntent.getActivity(
                 context,
-                taskId.toInt(), // Używamy taskId jako requestCode, aby powiadomienia były unikalne
+                taskId.toInt(),
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
-            val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+            val builder = NotificationCompat.Builder(context, id)
                 .setContentTitle(taskTitle)
-                .setContentText(taskDescription)
-                .setSmallIcon(R.drawable.notification)
                 .setContentIntent(pendingIntent)
+                .setSmallIcon(R.drawable.notification)
                 .setAutoCancel(true)
             notificationManager.notify(taskId.toInt(), builder.build())
         }

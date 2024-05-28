@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,8 +13,6 @@ import android.widget.ImageButton
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContentProviderCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -102,6 +99,7 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 filterTasks(s.toString())
             }
+
             override fun afterTextChanged(s: Editable?) {}
         })
 
@@ -110,7 +108,9 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
             settingsDialog.show(supportFragmentManager, "SettingsDialogFragment")
         }
 
-        if (!checkNotificationPermission()) {
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (!notificationManager.areNotificationsEnabled()) {
             showNotificationPermissionDialog()
         }
     }
@@ -150,10 +150,16 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
 
     private fun showNotificationPermissionDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Enable Notifications")
-            .setMessage("Do you want to enable notifications for this app?")
+            .setTitle("Notifications")
+            .setMessage("Do you want to enable notifications?")
             .setPositiveButton("Yes") { dialog, _ ->
-                navigateToNotificationSettings()
+                val intent = Intent().apply {
+                    action = "android.settings.APP_NOTIFICATION_SETTINGS"
+                    putExtra("app_package", packageName)
+                    putExtra("app_uid", applicationInfo.uid)
+                    putExtra("android.provider.extra.APP_PACKAGE", packageName)
+                }
+                startActivity(intent)
                 dialog.dismiss()
             }
             .setNegativeButton("No") { dialog, _ ->
@@ -161,25 +167,6 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
             }
             .create()
             .show()
-    }
-
-    private fun checkNotificationPermission(): Boolean {
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManager.areNotificationsEnabled()
-        } else {
-            NotificationManagerCompat.from(this).areNotificationsEnabled()
-        }
-    }
-
-    private fun navigateToNotificationSettings() {
-        val intent = Intent().apply {
-            action = "android.settings.APP_NOTIFICATION_SETTINGS"
-            putExtra("app_package", packageName)
-            putExtra("app_uid", applicationInfo.uid)
-            putExtra("android.provider.extra.APP_PACKAGE", packageName)
-        }
-        startActivity(intent)
     }
 
 
@@ -226,7 +213,8 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
         viewModel.addTask(newTask, attachmentEntities).observe(this) { taskId ->
             if (taskId != null) {
                 newTask.id = taskId
-                NotificationUtils.setNotification(this.applicationContext, newTask)
+                if (newTask.notificationEnabled)
+                    NotificationUtils.setNotification(this.applicationContext, newTask)
             }
         }
     }
