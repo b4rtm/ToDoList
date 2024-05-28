@@ -156,11 +156,9 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
             )
         )
 
-        if (task.notificationEnabled)
-            switchNotification.isChecked = true
+        switchNotification.isChecked = task.notificationEnabled
 
-        if (task.status == TaskStatus.COMPLETED)
-            switchDone.isChecked = true
+        switchDone.isChecked = task.status == TaskStatus.COMPLETED
 
         val categories = resources.getStringArray(R.array.categories)
         updateCategorySpinner.setSelection(categories.indexOf(task.category))
@@ -182,7 +180,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         else
             TaskStatus.IN_PROGRESS
 
-        val updatedNotificationEnabled = switchDone.isChecked
+        val updatedNotificationEnabled = switchNotification.isChecked
         val updatedCategory = updateCategorySpinner.selectedItem.toString()
 
         val updatedTask = Task(
