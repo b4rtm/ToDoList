@@ -37,9 +37,10 @@ Task Details: each task holds essential information, including:
 - Notification Time:
 
 ## Screenshots
+<img src="https://github.com/b4rtm/ToDoList/assets/97225620/2e344ad5-41d9-4eb2-a443-c48c336e739c" alt="Screenshot" height="660px" />
+<img src="https://github.com/b4rtm/ToDoList/assets/97225620/20c65839-4f31-4ef6-bad3-feb5c48be298" alt="Screenshot" height="660px" />
+<img src="https://github.com/b4rtm/ToDoList/assets/97225620/721a8539-d2a9-425c-b5f0-056fa7ae0d13" alt="Screenshot" height="660px" />
+<img src="https://github.com/b4rtm/ToDoList/assets/97225620/ced23452-9fa2-49b3-9119-25759ea7b51e" alt="Screenshot" height="660px" />
+<img src="https://github.com/b4rtm/ToDoList/assets/97225620/ead14e56-a174-4dec-af33-16444468f47c" alt="Screenshot" height="660px" />
 
-![438083390_1465389100738389_4929234602923126024_n](https://github.com/b4rtm/ToDoList/assets/97225620/ced23452-9fa2-49b3-9119-25759ea7b51e)
-![438069647_838965291424988_3688606866144051080_n](https://github.com/b4rtm/ToDoList/assets/97225620/ead14e56-a174-4dec-af33-16444468f47c)
-![438089747_1385732295402740_5975884525254105226_n](https://github.com/b4rtm/ToDoList/assets/97225620/721a8539-d2a9-425c-b5f0-056fa7ae0d13)
-![438083432_418575371142671_1428902063217347287_n](https://github.com/b4rtm/ToDoList/assets/97225620/2e344ad5-41d9-4eb2-a443-c48c336e739c)
-![438089721_976963983680084_4427250549089816206_n](https://github.com/b4rtm/ToDoList/assets/97225620/20c65839-4f31-4ef6-bad3-feb5c48be298)
+
