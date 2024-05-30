@@ -137,12 +137,18 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
                 Log.d("MainActivity", "Navigating to task with ID: $taskId")
                 val bundle = Bundle()
                 bundle.putLong("TASK_ID", task.id)
+
+                val oldFragment = supportFragmentManager.findFragmentByTag(TaskDetailsFragment::class.java.simpleName)
+
+                if (oldFragment != null && oldFragment is TaskDetailsFragment) {
+                    return@let
+                }
                 val taskDetailFragment = TaskDetailsFragment.newInstance(task.id)
 
                 taskDetailFragment.arguments = bundle
 
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.main, taskDetailFragment)
+                    .replace(R.id.main, taskDetailFragment,TaskDetailsFragment::class.java.simpleName)
                     .addToBackStack(null)
                     .commit()
                 fab.hide()
@@ -190,7 +196,7 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
         taskDetailFragment.arguments = bundle
 
         supportFragmentManager.beginTransaction()
-            .replace(R.id.main, taskDetailFragment)
+            .replace(R.id.main, taskDetailFragment,TaskDetailsFragment::class.java.simpleName)
             .addToBackStack(null)
             .commit()
         fab.hide()
