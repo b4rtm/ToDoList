@@ -31,7 +31,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
     TaskDetailsFragment.OnTaskUpdateListener, SettingsDialogFragment.SettingsDialogListener {
 
-    private lateinit var fab: FloatingActionButton
+    lateinit var fab: FloatingActionButton
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewModel: TaskViewModel
     private lateinit var adapter: TaskAdapter
@@ -226,6 +226,20 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
 
     fun onDeleteButtonClick(task: Task) {
         viewModel.deleteTask(task)
+    }
+
+
+    override fun onStop() {
+        super.onStop()
+        fab.hide() // Show FAB when fragment stops (goes to background)
+    }
+
+    override fun onPause() {
+        super.onPause()
+//        // Check if TaskDetailsFragment is not visible and show FAB if so
+//        if (supportFragmentManager.findFragmentById(R.id.main) !is TaskDetailsFragment) {
+            fab.hide()
+//        }
     }
 
     override fun onBackPressed() {

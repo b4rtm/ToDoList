@@ -26,6 +26,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
 import androidx.appcompat.widget.SwitchCompat
+import com.example.todolist.MainActivity
 import com.example.todolist.R
 import com.example.todolist.TaskViewModel
 import com.example.todolist.entities.Attachment
@@ -60,6 +61,8 @@ class TaskDetailsFragment : Fragment() {
     private lateinit var addAttachmentButton: Button
     private lateinit var task: Task
 
+    private lateinit var mainActivity: MainActivity
+
     private var selectedDate: Long = 0L
     private  var taskId: Long = 0L
     private var taskUpdateListener: OnTaskUpdateListener? = null
@@ -68,6 +71,7 @@ class TaskDetailsFragment : Fragment() {
         super.onAttach(context)
         if (context is OnTaskUpdateListener) {
             taskUpdateListener = context
+            mainActivity = context as MainActivity
         } else {
             throw RuntimeException("$context must implement OnTaskUpdateListener")
         }
@@ -253,5 +257,15 @@ class TaskDetailsFragment : Fragment() {
 
     interface OnTaskUpdateListener {
         fun onTaskUpdated()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mainActivity.fab.hide()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mainActivity.fab.hide()
     }
 }
