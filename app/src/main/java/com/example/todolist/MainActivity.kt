@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.activity.result.ActivityResultLauncher
@@ -133,9 +134,11 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
     private fun navigateToTask(taskId: Long) {
         viewModel.getTask(taskId).observe(this) { task ->
             task?.let {
+                Log.d("MainActivity", "Navigating to task with ID: $taskId")
                 val bundle = Bundle()
                 bundle.putLong("TASK_ID", task.id)
-                val taskDetailFragment = TaskDetailsFragment(task)
+                val taskDetailFragment = TaskDetailsFragment.newInstance(task.id)
+
                 taskDetailFragment.arguments = bundle
 
                 supportFragmentManager.beginTransaction()
@@ -179,9 +182,11 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
     }
 
     private fun onClickTaskAction(task: Task) {
+        Log.d("MainActivity", "Navigating to task with ID: ${task.id}")
         val bundle = Bundle()
         bundle.putLong("TASK_ID", task.id)
-        val taskDetailFragment = TaskDetailsFragment(task)
+        val taskDetailFragment = TaskDetailsFragment.newInstance(task.id)
+
         taskDetailFragment.arguments = bundle
 
         supportFragmentManager.beginTransaction()

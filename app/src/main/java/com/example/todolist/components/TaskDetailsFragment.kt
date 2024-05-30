@@ -32,8 +32,19 @@ import com.example.todolist.entities.Attachment
 import com.example.todolist.entities.TaskStatus
 import com.example.todolist.utils.DateTimeUtils
 
+class TaskDetailsFragment : Fragment() {
 
-class TaskDetailsFragment(private val task: Task) : Fragment() {
+    companion object {
+        private const val ARG_TASK_ID = "task_id"
+
+        @JvmStatic
+        fun newInstance(taskId: Long) = TaskDetailsFragment().apply {
+            Log.d(" newinst", taskId.toString())
+            arguments = Bundle().apply {
+                putLong(ARG_TASK_ID, taskId)
+            }
+        }
+    }
 
     private lateinit var viewModel: TaskViewModel
     private lateinit var taskTitle: TextView
@@ -47,8 +58,10 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
     private lateinit var switchDone: SwitchCompat
     private lateinit var switchNotification: SwitchCompat
     private lateinit var addAttachmentButton: Button
+    private lateinit var task: Task
 
-    private var selectedDate = task.dueDate
+    private var selectedDate: Long = 0L
+    private  var taskId: Long = 0L
     private var taskUpdateListener: OnTaskUpdateListener? = null
 
     override fun onAttach(context: Context) {
@@ -69,6 +82,8 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        taskId = arguments?.getLong("TASK_ID", -1)!!
+
         requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
         return inflater.inflate(R.layout.fragment_task_detail, container, false)
     }
@@ -113,7 +128,15 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
         calendarButton = view.findViewById(R.id.calendarButton)
         addAttachmentButton = view.findViewById(R.id.addAttachmentButton)
 
-        initFields()
+        viewModel.getTask(taskId).observe(viewLifecycleOwner) { task1 ->
+            if (task1 != null) {
+                Log.d("TaskDetailsFragment", "Task found: $task1")
+                task = task1
+                initFields()
+            } else {
+                Log.d("TaskDetailsFragment", "Task not found")
+            }
+        }
 
         confirmUpdateButton.setOnClickListener {
             updateTask(view)
@@ -216,7 +239,7 @@ class TaskDetailsFragment(private val task: Task) : Fragment() {
     }
 
     private fun loadImages() {
-        viewModel.getAttachmentsForTaskLive(task.id).observe(viewLifecycleOwner) { attachments ->
+        viewModel.getAttachmentsForTaskLive(taskId).observe(viewLifecycleOwner) { attachments ->
             updateAttachmentViews(attachments)
         }
     }
