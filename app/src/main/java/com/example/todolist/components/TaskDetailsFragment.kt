@@ -164,7 +164,7 @@ class TaskDetailsFragment : Fragment() {
     private fun initFields() {
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
         val formatterWithoutSecs = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
-
+        selectedDate = task.dueDate
         taskTitle.text = task.title
         description.text = task.description
         taskCreatedAt.text = formatter.format(
