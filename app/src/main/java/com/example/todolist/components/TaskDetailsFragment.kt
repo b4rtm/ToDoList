@@ -145,6 +145,7 @@ class TaskDetailsFragment : Fragment() {
         confirmUpdateButton.setOnClickListener {
             updateTask(view)
             hideKeyboard()
+            mainActivity.fab.show()
             requireActivity().supportFragmentManager.popBackStack()
             taskUpdateListener?.onTaskUpdated()
         }

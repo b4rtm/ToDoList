@@ -228,18 +228,9 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
         viewModel.deleteTask(task)
     }
 
-
-    override fun onStop() {
-        super.onStop()
-        fab.hide() // Show FAB when fragment stops (goes to background)
-    }
-
-    override fun onPause() {
-        super.onPause()
-//        // Check if TaskDetailsFragment is not visible and show FAB if so
-//        if (supportFragmentManager.findFragmentById(R.id.main) !is TaskDetailsFragment) {
-            fab.hide()
-//        }
+    override fun onResume() {
+        super.onResume()
+        fab.show()
     }
 
     override fun onBackPressed() {
