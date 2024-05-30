@@ -43,20 +43,22 @@ object NotificationUtils {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
-            val sharedPreferences = context.getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+            val sharedPreferences =
+                context.getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
             var notificationTime = sharedPreferences.getInt("notificationTime", 1)
             notificationTime = (notificationTime * 60 * 1000L).toInt()
 
             val executionTime = task.dueDate
 //            val notifyTime = executionTime - notificationTime
-            val notifyTime = LocalDateTime.now().plusSeconds(4).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            val notifyTime =
+                LocalDateTime.now().plusSeconds(4).atZone(ZoneId.systemDefault()).toInstant()
+                    .toEpochMilli()
 
             if (alarmManager.canScheduleExactAlarms()) {
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, notifyTime, pendingIntent)
             }
         }
     }
-
 
 
     class AlarmReceiver : BroadcastReceiver() {
@@ -71,7 +73,8 @@ object NotificationUtils {
         }
 
         private fun showNotification(context: Context, taskId: Long, taskTitle: String) {
-            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
             val intent = Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

@@ -19,12 +19,14 @@ object DateTimeUtils {
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        val datePickerDialog = DatePickerDialog(context,
+        val datePickerDialog = DatePickerDialog(
+            context,
             { _, selectedYear, selectedMonth, selectedDay ->
                 val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
                 val currentMinute = calendar.get(Calendar.MINUTE)
 
-                val timePickerDialog = TimePickerDialog(context,
+                val timePickerDialog = TimePickerDialog(
+                    context,
                     { _, hourOfDay, minute ->
                         val selectedMillis = Calendar.getInstance().apply {
                             set(Calendar.YEAR, selectedYear)

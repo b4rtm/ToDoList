@@ -1,4 +1,3 @@
-// AddTaskDialog.kt
 package com.example.todolist.components
 
 import android.app.Dialog

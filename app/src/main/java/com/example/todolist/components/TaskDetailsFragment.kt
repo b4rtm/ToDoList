@@ -1,37 +1,36 @@
 package com.example.todolist.components
 
+import android.Manifest
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
-import com.example.todolist.entities.Task
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import android.Manifest
-import android.content.Context
-import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.SwitchCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.todolist.MainActivity
 import com.example.todolist.R
 import com.example.todolist.TaskViewModel
 import com.example.todolist.entities.Attachment
+import com.example.todolist.entities.Task
 import com.example.todolist.entities.TaskStatus
 import com.example.todolist.utils.DateTimeUtils
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 class TaskDetailsFragment : Fragment() {
 
@@ -40,7 +39,6 @@ class TaskDetailsFragment : Fragment() {
 
         @JvmStatic
         fun newInstance(taskId: Long) = TaskDetailsFragment().apply {
-            Log.d(" newinst", taskId.toString())
             arguments = Bundle().apply {
                 putLong(ARG_TASK_ID, taskId)
             }
@@ -64,7 +62,7 @@ class TaskDetailsFragment : Fragment() {
     private lateinit var mainActivity: MainActivity
 
     private var selectedDate: Long = 0L
-    private  var taskId: Long = 0L
+    private var taskId: Long = 0L
     private var taskUpdateListener: OnTaskUpdateListener? = null
 
     override fun onAttach(context: Context) {
@@ -134,11 +132,9 @@ class TaskDetailsFragment : Fragment() {
 
         viewModel.getTask(taskId).observe(viewLifecycleOwner) { task1 ->
             if (task1 != null) {
-                Log.d("TaskDetailsFragment", "Task found: $task1")
                 task = task1
                 initFields()
             } else {
-                Log.d("TaskDetailsFragment", "Task not found")
             }
         }
 
@@ -221,7 +217,6 @@ class TaskDetailsFragment : Fragment() {
             notificationEnabled = updatedNotificationEnabled
         )
 
-        Log.d("TaskDetailsFragment", "Updating task: $updatedTask")
         viewModel.updateTask(updatedTask)
     }
 

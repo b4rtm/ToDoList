@@ -28,7 +28,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         loadTasks()
     }
 
-    fun loadTasks() : LiveData<List<Task>>{
+    fun loadTasks(): LiveData<List<Task>> {
         viewModelScope.launch {
             val tasks = withContext(Dispatchers.IO) {
                 taskDao.getAllTasks()
@@ -39,11 +39,12 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun filterAndSortTasks(tasks: List<Task>) {
-        val sharedPreferences = getApplication<Application>().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            getApplication<Application>().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
         val hideCompleted = sharedPreferences.getBoolean("hideCompleted", false)
         val selectedCategory = sharedPreferences.getString("selectedCategory", "")
         val filteredTasks = tasks.filter { task ->
-            (!hideCompleted || task.status==TaskStatus.IN_PROGRESS) &&
+            (!hideCompleted || task.status == TaskStatus.IN_PROGRESS) &&
                     (selectedCategory.isNullOrEmpty() || task.category == selectedCategory)
         }.sortedBy { it.dueDate }
 
@@ -58,8 +59,8 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         var result = MutableLiveData<Long>()
 
         viewModelScope.launch {
-            val taskId =  withContext(Dispatchers.IO) {
-                 taskDao.insert(task)
+            val taskId = withContext(Dispatchers.IO) {
+                taskDao.insert(task)
             }
             withContext(Dispatchers.Main) {
             }

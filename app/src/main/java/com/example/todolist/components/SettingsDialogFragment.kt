@@ -37,14 +37,11 @@ class SettingsDialogFragment : DialogFragment() {
         val spinnerCategories = view.findViewById<Spinner>(R.id.spinnerCategories)
         val editTextNotificationTime = view.findViewById<EditText>(R.id.editTextNotificationTime)
 
-        // Set up spinner with categories (example categories, update accordingly)
-
         val categories = resources.getStringArray(R.array.categories)
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerCategories.adapter = adapter
 
-        // Load saved settings
         val sharedPreferences = requireActivity().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
         checkBoxHideCompleted.isChecked = sharedPreferences.getBoolean("hideCompleted", false)
         val selectedCategory = sharedPreferences.getString("selectedCategory", "")
@@ -60,12 +57,10 @@ class SettingsDialogFragment : DialogFragment() {
         builder.setView(view)
             .setTitle("App settings")
             .setPositiveButton("Save") { _, _ ->
-                // Save settings
                 val hideCompleted = checkBoxHideCompleted.isChecked
                 val selectedCategory = spinnerCategories.selectedItem.toString()
                 val notificationTime = editTextNotificationTime.text.toString().toIntOrNull() ?: 0
 
-                // Save to SharedPreferences
                 val editor = sharedPreferences.edit()
                 editor.putBoolean("hideCompleted", hideCompleted)
                 editor.putString("selectedCategory", selectedCategory)
