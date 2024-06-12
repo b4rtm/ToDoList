@@ -27,6 +27,7 @@ import com.example.todolist.entities.Attachment
 import com.example.todolist.entities.Task
 import com.example.todolist.entities.TaskStatus
 import com.example.todolist.utils.DateTimeUtils
+import com.example.todolist.utils.ImageUtils
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -104,12 +105,15 @@ class TaskDetailsFragment : Fragment() {
         ActivityResultContracts.GetContent()
     ) { uri ->
         uri?.let {
-            val attachment = Attachment(
-                taskId = task.id,
-                path = it.toString()
-            )
-            viewModel.addAttachment(attachment)
-            taskUpdateListener?.onTaskUpdated()
+            val savedPath = ImageUtils.saveImageToInternalStorage(requireContext(), it)
+            if (savedPath != null) {
+                val attachment = Attachment(
+                    taskId = task.id,
+                    path = savedPath
+                )
+                viewModel.addAttachment(attachment)
+                taskUpdateListener?.onTaskUpdated()
+            }
         }
     }
 
@@ -232,6 +236,7 @@ class TaskDetailsFragment : Fragment() {
 
         deleteButton.setOnClickListener {
             viewModel.deleteAttachment(attachment)
+            ImageUtils.deleteImageFromInternalStorage(requireContext(), attachment.path)
             attachmentContainer.removeView(attachmentView)
         }
 

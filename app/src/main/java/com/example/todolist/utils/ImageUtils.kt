@@ -26,4 +26,18 @@ object ImageUtils {
             null
         }
     }
+
+    fun deleteImageFromInternalStorage(context: Context, path: String): Boolean {
+        return try {
+            val file = File(path)
+            if (file.exists()) {
+                file.delete()
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
 }
