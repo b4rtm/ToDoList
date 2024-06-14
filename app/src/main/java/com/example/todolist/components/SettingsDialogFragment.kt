@@ -38,11 +38,13 @@ class SettingsDialogFragment : DialogFragment() {
         val editTextNotificationTime = view.findViewById<EditText>(R.id.editTextNotificationTime)
 
         val categories = resources.getStringArray(R.array.categories)
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
+        val adapter =
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerCategories.adapter = adapter
 
-        val sharedPreferences = requireActivity().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            requireActivity().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
         checkBoxHideCompleted.isChecked = sharedPreferences.getBoolean("hideCompleted", false)
         val selectedCategory = sharedPreferences.getString("selectedCategory", "")
         val notificationTime = sharedPreferences.getInt("notificationTime", 0)

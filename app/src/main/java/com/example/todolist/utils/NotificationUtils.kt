@@ -49,10 +49,8 @@ object NotificationUtils {
             notificationTime = (notificationTime * 60 * 1000L).toInt()
 
             val executionTime = task.dueDate
-//            val notifyTime = executionTime - notificationTime
-            val notifyTime =
-                LocalDateTime.now().plusSeconds(4).atZone(ZoneId.systemDefault()).toInstant()
-                    .toEpochMilli()
+            val notifyTime = executionTime - notificationTime
+
 
             if (alarmManager.canScheduleExactAlarms()) {
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, notifyTime, pendingIntent)
