@@ -115,6 +115,10 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         return taskDao.getTaskById(taskId)
     }
 
+    fun getTaskSync(taskId: Long): Task? {
+        return taskDao.getTaskSync(taskId)
+    }
+
     fun addAttachment(attachment: Attachment) {
         viewModelScope.launch(Dispatchers.IO) {
             taskDao.insertAttachment(attachment)

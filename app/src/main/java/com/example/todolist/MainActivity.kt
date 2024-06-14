@@ -124,6 +124,7 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
 
     private fun handleNotificationIntent(intent: Intent) {
         if (intent.getBooleanExtra("navigate_to_task", false)) {
+            Log.d("MainActivity", "ESSSAAAAAA")
             val taskId = intent.getLongExtra("task_id", -1)
             if (taskId != -1L) {
                 navigateToTask(taskId)
@@ -132,29 +133,38 @@ class MainActivity : AppCompatActivity(), AddTaskDialog.OnTaskAddedListener,
     }
 
     private fun navigateToTask(taskId: Long) {
-        viewModel.getTask(taskId).observe(this) { task ->
+        Thread {
+            val task = viewModel.getTaskSync(taskId)
             task?.let {
-                Log.d("MainActivity", "Navigating to task with ID: $taskId")
-                val bundle = Bundle()
-                bundle.putLong("TASK_ID", task.id)
+                runOnUiThread {
+                    Log.d("MainActivity", "Navigating to task with ID: $taskId")
+                    val bundle = Bundle()
+                    bundle.putLong("TASK_ID", task.id)
 
-                val oldFragment = supportFragmentManager.findFragmentByTag(TaskDetailsFragment::class.java.simpleName)
+                    val oldFragment =
+                        supportFragmentManager.findFragmentByTag(TaskDetailsFragment::class.java.simpleName)
 
-                if (oldFragment != null && oldFragment is TaskDetailsFragment) {
-                    return@let
+                    if (oldFragment != null && oldFragment is TaskDetailsFragment) {
+                        return@runOnUiThread
+                    }
+                    val taskDetailFragment = TaskDetailsFragment.newInstance(task.id)
+
+                    taskDetailFragment.arguments = bundle
+
+                    supportFragmentManager.beginTransaction()
+                        .replace(
+                            R.id.main,
+                            taskDetailFragment,
+                            TaskDetailsFragment::class.java.simpleName
+                        )
+                        .addToBackStack(null)
+                        .commit()
+                    fab.hide()
                 }
-                val taskDetailFragment = TaskDetailsFragment.newInstance(task.id)
-
-                taskDetailFragment.arguments = bundle
-
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.main, taskDetailFragment,TaskDetailsFragment::class.java.simpleName)
-                    .addToBackStack(null)
-                    .commit()
-                fab.hide()
             }
-        }
+        }.start()
     }
+
 
     private fun showNotificationPermissionDialog() {
         AlertDialog.Builder(this)
